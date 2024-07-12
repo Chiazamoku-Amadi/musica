@@ -7,3 +7,9 @@
   margin: 0;
   padding: 0;
 }
+
+@layer base {
+  html {
+    font-family: theme("fontFamily.sans");
+  }
+}
