@@ -1,13 +1,10 @@
 import { Icon } from "@iconify-icon/react";
 import { useState } from "react";
-import { toggleTheme } from "../features/theme/themeSlice";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { useAppSelector } from "../app/hooks";
 
 const Navbar: React.FC = () => {
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
   const [openNav, setOpenNav] = useState(true);
-
-  const dispatch = useAppDispatch();
 
   const menu = [
     {
@@ -114,7 +111,7 @@ const Navbar: React.FC = () => {
   return (
     <aside
       className={`
-            fixed md:static top-0 left-0 flex flex-col justify-start px-6 py-8 h-screen gap-12 z-50 ${
+            fixed md:static top-0 left-0 flex flex-col justify-start px-6 py-8 gap-12 z-50 overflow-auto h-screen ${
               isDarkMode ? "bg-dark-navbar-bg" : "bg-light-navbar-bg"
             } ${
         openNav ? "w-full md:w-[350px] p-4" : "w-[15%] md:w-[4%] py-4 px-1"
@@ -128,7 +125,9 @@ const Navbar: React.FC = () => {
         <div className="flex justify-start items-center gap-2">
           <Icon
             icon="emojione-monotone:musical-score"
-            className={`${isDarkMode ? "text-primary" : "text-black"} text-3xl`}
+            className={`${
+              isDarkMode ? "text-primary" : "text-dark-background"
+            } text-3xl`}
           />
           {openNav && <h1 className="text-primary-text text-2xl">Musica</h1>}
         </div>
@@ -138,7 +137,7 @@ const Navbar: React.FC = () => {
             <Icon
               icon="radix-icons:double-arrow-left"
               className={`text-primary-text ${
-                isDarkMode ? "hover:text-primary" : "hover:text-black"
+                isDarkMode ? "hover:text-primary" : "hover:text-dark-background"
               } cursor-pointer`}
               onClick={() => setOpenNav((prevOpenNav) => !prevOpenNav)}
             />
@@ -146,7 +145,7 @@ const Navbar: React.FC = () => {
             <Icon
               icon="radix-icons:double-arrow-right"
               className={`text-primary-text ${
-                isDarkMode ? "hover:text-primary" : "hover:text-black"
+                isDarkMode ? "hover:text-primary" : "hover:text-dark-background"
               } cursor-pointer`}
               onClick={() => setOpenNav((prevOpenNav) => !prevOpenNav)}
             />
@@ -291,27 +290,6 @@ const Navbar: React.FC = () => {
                 </li>
               );
             })}
-
-            <div
-              onClick={() => dispatch(toggleTheme())}
-              className={`${openNav && "mt-1"}`}
-            >
-              {isDarkMode ? (
-                <Icon
-                  icon="entypo:light-up"
-                  className={`text-primary-text ${
-                    isDarkMode ? "hover:text-primary" : "hover:text-black"
-                  } text-lg py-1 cursor-pointer`}
-                />
-              ) : (
-                <Icon
-                  icon="arcticons:dark-launcher"
-                  className={`text-primary-text ${
-                    isDarkMode ? "hover:text-primary" : "hover:text-black"
-                  } text-lg py-1 cursor-pointer`}
-                />
-              )}
-            </div>
           </div>
         </div>
       </section>

@@ -10,10 +10,12 @@ export default {
         dark: {
           background: "#000000",
           "navbar-bg": "#1A1A1A",
+          "topbar-bg": "#343434",
         },
         light: {
           background: "#FFFFFF",
           "navbar-bg": "#454851",
+          "topbar-bg": "#E6E6E6",
         },
       },
 
