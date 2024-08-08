@@ -2,43 +2,131 @@ import { useEffect, useState } from "react";
 import { useAppSelector } from "../app/hooks";
 import Navbar from "../components/Navbar";
 import Topbar from "../components/Topbar";
-import { getSpotifyAuthURL } from "../spotifyAuth";
+import { fetchPopularArtists, fetchTrendingAlbums } from "../spotifyAPI";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
+import "swiper/css";
+interface Album {
+  id: string;
+  name: string;
+  images: { url: string }[];
+  artists: { name: string }[];
+}
+
+interface Artist {
+  id: string;
+  name: string;
+  images: { url: string }[];
+}
 
 const Home: React.FC = () => {
-  const [authUrl, setAuthUrl] = useState<string | null>(null);
+  const [openNav, setOpenNav] = useState(true);
+  const [trendingAlbums, setTrendingAlbums] = useState<Album[]>([]);
+  const [popularArtists, setPopularArtists] = useState<Artist[]>([]);
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
 
+  // Fetching Trending Albums
   useEffect(() => {
-    const fetchUrl = async () => {
-      try {
-        const url = await getSpotifyAuthURL();
-        setAuthUrl(url);
-      } catch (error) {
-        console.error("Failed to get Spotify auth URL", error);
-      }
-    };
+    if (accessToken) {
+      fetchTrendingAlbums(accessToken)
+        .then(setTrendingAlbums)
+        .catch(console.error);
+    }
+  }, [accessToken]);
 
-    fetchUrl();
-  }, []);
+  // Fetching Popular Artists
+  useEffect(() => {
+    if (accessToken) {
+      fetchPopularArtists(accessToken)
+        .then(setPopularArtists)
+        .catch(console.error);
+    }
+  }, [accessToken]);
+
+  const albums = trendingAlbums.map((album) => (
+    <SwiperSlide key={album.id} className="col-span-1">
+      <div className="relative w-full h-[70vh]">
+        <img
+          src={album.images[0].url}
+          alt={album.name}
+          className="w-full h-full object-top object-cover"
+        />
+        <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4">
+          <h3 className="text-base md:text-2xl font-semibold">{album.name}</h3>
+          <p className="text-base md:text-lg">
+            {album.artists.map((artist) => artist.name).join(", ")}
+          </p>
+        </div>
+      </div>
+    </SwiperSlide>
+  ));
+
+  const artists = popularArtists.map((artist) => {
+    return (
+      <div key={artist.id} className="space-y-2">
+        <img
+          src={artist.images[0].url}
+          alt="album-image"
+          className="rounded-xl shadow-2xl h-52 w-full"
+        />
+        <p className="text-xs md:text-base">{artist.name}</p>
+      </div>
+    );
+  });
 
   return (
-    <div className="flex overflow-hidden h-screen w-full">
-      <Navbar />
+    <div className="flex justify-end overflow-hidden h-screen w-full">
+      <Navbar openNav={openNav} setOpenNav={setOpenNav} />
 
       <main
         className={`${
           isDarkMode ? "bg-dark-background" : "bg-light-background"
-        } h-screen w-full`}
+        } overflow-y-auto h-screen w-full`}
       >
-        <Topbar />
+        <Topbar setOpenNav={setOpenNav} />
 
-        {authUrl ? (
-          <a href={authUrl} target="_blank" rel="noopener noreferrer">
-            Login with Spotify
-          </a>
-        ) : (
-          <div>Loading...</div>
-        )}
+        <section className="space-y-6 md:space-y-10 p-4 md:p-8 w-full">
+          <div
+            className={`${
+              isDarkMode ? "text-primary-text" : "text-dark-background"
+            } w-full`}
+          >
+            <h3
+              className={`text-2xl md:text-3xl font-medium mb-4 ${
+                isDarkMode ? "text-primary-text" : "text-dark-background"
+              }`}
+            >
+              Trending Albums
+            </h3>
+
+            <Swiper
+              modules={[Navigation, Pagination, Autoplay]}
+              spaceBetween={0}
+              slidesPerView={1}
+              navigation
+              pagination={{ clickable: true }}
+              autoplay={{ delay: 3000 }}
+              className="mySwiper rounded-2xl"
+              style={{ height: "70vh" }}
+            >
+              {albums}
+            </Swiper>
+          </div>
+
+          <div
+            className={`${
+              isDarkMode ? "text-primary-text" : "text-dark-background"
+            } w-full`}
+          >
+            <h3 className="text-2xl md:text-3xl font-medium mb-4">
+              Popular Artists
+            </h3>
+            <div className="grid grid-cols-2 xs:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6 xs:gap-3">
+              {artists}
+            </div>
+          </div>
+        </section>
       </main>
     </div>
   );

@@ -6,9 +6,9 @@ const Search = () => {
 
   return (
     <div
-      className={`flex items-center gap-2 border ${
+      className={`flex items-center gap-1 md:gap-2 border ${
         isDarkMode ? "border-dark-navbar-bg" : "border-secondary-text"
-      } rounded-full px-4 py-2 w-2/5`}
+      } rounded-full px-2 md:px-4 py-2 w-3/5 md:w-2/5`}
     >
       <Icon
         icon="bitcoin-icons:search-outline"
@@ -18,7 +18,7 @@ const Search = () => {
         type="text"
         name="searchQuery"
         placeholder="Search for a song or singer"
-        className={`bg-transparent text-sm ${
+        className={`bg-transparent text-xs md:text-sm ${
           isDarkMode ? "text-primary-text" : "text-light-navbar-bg"
         } placeholder:text-secondary-text outline-none w-full`}
       />

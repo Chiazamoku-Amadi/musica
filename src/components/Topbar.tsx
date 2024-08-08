@@ -4,35 +4,47 @@ import { toggleTheme } from "../features/theme/themeSlice";
 import Search from "./Search";
 import User from "./User";
 
-const Topbar = () => {
+interface TopbarProps {
+  setOpenNav: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Topbar: React.FC<TopbarProps> = ({ setOpenNav }) => {
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
   const dispatch = useAppDispatch();
 
   return (
     <div
-      className={`flex justify-between items-center ${
+      className={`sticky top-0 z-10 backdrop-filter backdrop-blur-lg bg-opacity-80 flex justify-between items-center ${
         isDarkMode ? "bg-dark-topbar-bg" : "bg-light-topbar-bg"
-      } px-8 py-4 w-full`}
+      } px-4 md:px-8 py-4 w-full`}
     >
       <Search />
 
-      <div
-        onClick={() => dispatch(toggleTheme())}
-        className="flex items-center gap-8"
-      >
-        {isDarkMode ? (
-          <Icon
-            icon="entypo:light-up"
-            className={`text-primary-text hover:text-dark-navbar-bg text-lg py-1 cursor-pointer`}
-          />
-        ) : (
-          <Icon
-            icon="arcticons:dark-launcher"
-            className={`text-light-navbar-bg hover:text-dark-background text-lg py-1 cursor-pointer`}
-          />
-        )}
+      <div className="flex items-center gap-4 sm:gap-8">
+        <div
+          className="flex items-center"
+          onClick={() => dispatch(toggleTheme())}
+        >
+          {isDarkMode ? (
+            <Icon
+              icon="entypo:light-up"
+              className={`text-primary-text hover:text-dark-navbar-bg text-lg py-1 cursor-pointer`}
+            />
+          ) : (
+            <Icon
+              icon="arcticons:dark-launcher"
+              className={`text-light-navbar-bg hover:text-dark-background text-lg py-1 cursor-pointer`}
+            />
+          )}
+        </div>
 
         <User />
+
+        <Icon
+          icon="pajamas:hamburger"
+          className="flex md:hidden text-secondary-text cursor-pointer"
+          onClick={() => setOpenNav((prevOpenNav: boolean) => !prevOpenNav)}
+        />
       </div>
     </div>
   );
