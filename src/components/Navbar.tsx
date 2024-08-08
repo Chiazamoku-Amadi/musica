@@ -1,99 +1,74 @@
 import { Icon } from "@iconify-icon/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppSelector } from "../app/hooks";
+import { useLocation } from "react-router-dom";
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  openNav: boolean;
+  setOpenNav: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
-  const [openNav, setOpenNav] = useState(true);
+  const [currentPage, setCurrentPage] = useState<string | null>(null);
+
+  const location = useLocation();
+
+  useEffect(() => {
+    setCurrentPage(location.pathname);
+  }, [location]);
+
+  console.log(location.pathname);
+  console.log(currentPage);
 
   const menu = [
     {
       title: "Home",
       category: "Menu",
-      icon: (
-        <Icon
-          icon="solar:home-2-bold"
-          className={`${!openNav && "text-xl"} text-primary-text`}
-        />
-      ),
+      icon: <Icon icon="solar:home-2-bold" />,
       url: "/home",
     },
     {
       title: "Discover",
       category: "Menu",
-      icon: (
-        <Icon
-          icon="iconamoon:discover-fill"
-          className={`${!openNav && "text-xl"} text-primary-text`}
-        />
-      ),
-      url: "/courses",
+      icon: <Icon icon="iconamoon:discover-fill" />,
+      url: "/discover",
     },
     {
       title: "Recently Listened",
       category: "Library",
-      icon: (
-        <Icon
-          icon="mdi:recent"
-          className={`${!openNav && "text-xl"} text-primary-text`}
-        />
-      ),
-      url: "/graduation",
+      icon: <Icon icon="mdi:recent" />,
+      url: "/recently-listened",
     },
     {
       title: "Favorites",
       category: "Library",
-      icon: (
-        <Icon
-          icon="lets-icons:favorites-fill"
-          className={`${!openNav && "text-xl"} text-primary-text`}
-        />
-      ),
-      url: "/login",
+      icon: <Icon icon="lets-icons:favorites-fill" />,
+      url: "/favorites",
     },
     {
       title: "My Playlists",
       category: "Playlist",
-      icon: (
-        <Icon
-          icon="ph:playlist-bold"
-          className={`${!openNav && "text-xl"} text-primary-text`}
-        />
-      ),
-      url: "/login",
+      icon: <Icon icon="ph:playlist-bold" />,
+      url: "/my-playlists",
     },
     {
       title: "Create New Playlist",
       category: "Playlist",
-      icon: (
-        <Icon
-          icon="solar:pen-new-square-linear"
-          className={`${!openNav && "text-xl"} text-primary-text`}
-        />
-      ),
-      url: "/login",
+      icon: <Icon icon="solar:pen-new-square-linear" />,
+      url: "/create-playlist",
     },
     {
       title: "Settings",
       category: "General",
-      icon: (
-        <Icon
-          icon="solar:settings-bold"
-          className={`${!openNav && "text-xl"} text-primary-text`}
-        />
-      ),
-      url: "/login",
+      icon: <Icon icon="solar:settings-bold" />,
+      url: "/settings",
     },
     {
       title: "Log Out",
       category: "General",
-      icon: (
-        <Icon
-          icon="solar:logout-2-outline"
-          className={`${!openNav && "text-xl"} text-primary-text`}
-        />
-      ),
-      url: "/login",
+      icon: <Icon icon="solar:logout-2-outline" />,
+      url: "",
     },
   ];
 
@@ -108,19 +83,22 @@ const Navbar: React.FC = () => {
     (menuItem) => menuItem.category === "General"
   );
 
+  const hoverColor = isDarkMode ? "primary" : "dark-background";
   return (
     <aside
       className={`
-            fixed md:static top-0 left-0 flex flex-col justify-start px-6 py-8 gap-12 z-50 overflow-auto h-screen ${
+            fixed md:static top-0 left-0 flex flex-col justify-start px-0 py-8 gap-12 z-50 overflow-hidden h-screen ${
               isDarkMode ? "bg-dark-navbar-bg" : "bg-light-navbar-bg"
             } ${
-        openNav ? "w-full md:w-[350px] p-4" : "w-[15%] md:w-[4%] py-4 px-1"
-      } transition-all duration-300`}
+        openNav
+          ? "w-full md:w-[350px] p-4"
+          : "hidden md:block w-[60px] py-4 px-1"
+      }`}
     >
       <section
         className={`flex ${
-          openNav ? "flex-row" : "flex-col gap-4"
-        } justify-between items-center`}
+          openNav ? "flex-row" : "flex-col gap-4 pb-8"
+        } justify-between items-center px-6`}
       >
         <div className="flex justify-start items-center gap-2">
           <Icon
@@ -139,7 +117,7 @@ const Navbar: React.FC = () => {
               className={`text-primary-text ${
                 isDarkMode ? "hover:text-primary" : "hover:text-dark-background"
               } cursor-pointer`}
-              onClick={() => setOpenNav((prevOpenNav) => !prevOpenNav)}
+              onClick={() => setOpenNav((prevOpenNav: boolean) => !prevOpenNav)}
             />
           ) : (
             <Icon
@@ -147,7 +125,7 @@ const Navbar: React.FC = () => {
               className={`text-primary-text ${
                 isDarkMode ? "hover:text-primary" : "hover:text-dark-background"
               } cursor-pointer`}
-              onClick={() => setOpenNav((prevOpenNav) => !prevOpenNav)}
+              onClick={() => setOpenNav((prevOpenNav: boolean) => !prevOpenNav)}
             />
           )}
         </div>
@@ -162,27 +140,36 @@ const Navbar: React.FC = () => {
           <h4
             className={`text-secondary-text ${
               openNav ? "text-sm" : "text-xs"
-            } pb-1`}
+            } px-6 pb-1`}
           >
             Menu
           </h4>
 
-          <div className={`flex flex-col ${openNav ? "gap-2" : "gap-4"}`}>
+          <div
+            className={`flex flex-col ${
+              openNav ? "gap-2" : "gap-4"
+            } pl-4 pr-6 w-full`}
+          >
             {menuCategory.map((menuItem, index) => {
+              const isCurrentPage = currentPage === menuItem.url;
+
               return (
-                <li
-                  key={index}
-                  className="flex justify-start items-center gap-3 text-base"
-                >
-                  {menuItem.icon}
-                  <span
-                    className={`${
-                      openNav ? "block" : "hidden"
-                    } text-primary-text pt-1`}
+                <div key={index} className="group">
+                  <li
+                    className={`flex justify-start items-center gap-3 text-base cursor-pointer ${
+                      openNav ? "pl-2" : `hover:text-${hoverColor} bg-opacity-0`
+                    } ${
+                      isCurrentPage
+                        ? `text-${hoverColor} group-hover:text-opacity-80`
+                        : `text-primary-text group-hover:text-${hoverColor} group-hover:text-opacity-80`
+                    } rounded w-full`}
                   >
-                    {menuItem.title}
-                  </span>
-                </li>
+                    {menuItem.icon}
+                    <span className={`${openNav ? "block" : "hidden"} pt-1`}>
+                      {menuItem.title}
+                    </span>
+                  </li>
+                </div>
               );
             })}
           </div>
@@ -196,26 +183,35 @@ const Navbar: React.FC = () => {
           <h4
             className={`text-secondary-text ${
               openNav ? "text-sm" : "text-xs"
-            } pb-1`}
+            } px-6 pb-1`}
           >
             Library
           </h4>
-          <div className={`flex flex-col ${openNav ? "gap-2" : "gap-4"}`}>
+          <div
+            className={`flex flex-col ${
+              openNav ? "gap-2" : "gap-4"
+            } pl-4 pr-6 w-full`}
+          >
             {libraryCategory.map((menuItem, index) => {
+              const isCurrentPage = currentPage === menuItem.url;
+
               return (
-                <li
-                  key={index}
-                  className="flex justify-start items-center gap-3 text-base"
-                >
-                  {menuItem.icon}
-                  <span
-                    className={`${
-                      openNav ? "block" : "hidden"
-                    } text-primary-text pt-1`}
+                <div key={index} className="group">
+                  <li
+                    className={`flex justify-start items-center gap-3 text-base cursor-pointer ${
+                      openNav ? "pl-2" : `hover:text-${hoverColor} bg-opacity-0`
+                    } ${
+                      isCurrentPage
+                        ? `text-${hoverColor} group-hover:text-opacity-80`
+                        : `text-primary-text group-hover:text-${hoverColor} group-hover:text-opacity-80`
+                    } rounded w-full`}
                   >
-                    {menuItem.title}
-                  </span>
-                </li>
+                    {menuItem.icon}
+                    <span className={`${openNav ? "block" : "hidden"} pt-1`}>
+                      {menuItem.title}
+                    </span>
+                  </li>
+                </div>
               );
             })}
           </div>
@@ -229,27 +225,36 @@ const Navbar: React.FC = () => {
           <h4
             className={`text-secondary-text ${
               openNav ? "text-sm" : "text-xs"
-            } pb-1`}
+            } px-6 pb-1`}
           >
             Playlist
           </h4>
 
-          <div className={`flex flex-col ${openNav ? "gap-2" : "gap-4"}`}>
+          <div
+            className={`flex flex-col ${
+              openNav ? "gap-2" : "gap-4"
+            } pl-4 pr-6 w-full`}
+          >
             {playlistCategory.map((menuItem, index) => {
+              const isCurrentPage = currentPage === menuItem.url;
+
               return (
-                <li
-                  key={index}
-                  className="flex justify-start items-center gap-3 text-base"
-                >
-                  {menuItem.icon}
-                  <span
-                    className={`${
-                      openNav ? "block" : "hidden"
-                    } text-primary-text pt-1`}
+                <div key={index} className="group">
+                  <li
+                    className={`flex justify-start items-center gap-3 text-base cursor-pointer ${
+                      openNav ? "pl-2" : `hover:text-${hoverColor} bg-opacity-0`
+                    } ${
+                      isCurrentPage
+                        ? `text-${hoverColor} group-hover:text-opacity-80`
+                        : `text-primary-text group-hover:text-${hoverColor} group-hover:text-opacity-80`
+                    } rounded w-full`}
                   >
-                    {menuItem.title}
-                  </span>
-                </li>
+                    {menuItem.icon}
+                    <span className={`${openNav ? "block" : "hidden"} pt-1`}>
+                      {menuItem.title}
+                    </span>
+                  </li>
+                </div>
               );
             })}
           </div>
@@ -263,31 +268,36 @@ const Navbar: React.FC = () => {
           <h4
             className={`text-secondary-text ${
               openNav ? "text-sm" : "text-xs"
-            } pb-1`}
+            } px-6 pb-1`}
           >
             General
           </h4>
 
           <div
             className={`flex flex-col ${
-              openNav ? "gap-2" : "gap-4 items-center"
-            }`}
+              openNav ? "gap-2" : "gap-4"
+            } pl-4 pr-6 w-full`}
           >
             {generalCategory.map((menuItem, index) => {
+              const isCurrentPage = currentPage === menuItem.url;
+
               return (
-                <li
-                  key={index}
-                  className="flex justify-start items-center gap-3 text-base"
-                >
-                  {menuItem.icon}
-                  <span
-                    className={`${
-                      openNav ? "block" : "hidden"
-                    } text-primary-text pt-1`}
+                <div key={index} className="group">
+                  <li
+                    className={`flex justify-start items-center gap-3 text-base cursor-pointer ${
+                      openNav ? "pl-2" : `hover:text-${hoverColor} bg-opacity-0`
+                    } ${
+                      isCurrentPage
+                        ? `text-${hoverColor} group-hover:text-opacity-80`
+                        : `text-primary-text group-hover:text-${hoverColor} group-hover:text-opacity-80`
+                    } rounded w-full`}
                   >
-                    {menuItem.title}
-                  </span>
-                </li>
+                    {menuItem.icon}
+                    <span className={`${openNav ? "block" : "hidden"} pt-1`}>
+                      {menuItem.title}
+                    </span>
+                  </li>
+                </div>
               );
             })}
           </div>

@@ -12,6 +12,7 @@ export interface TokenResponse {
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const clientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
 const redirectUri = import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
+const authUrl = new URL("https://accounts.spotify.com/authorize");
 
 // Create Code Verifier
 const generateRandomString = (length: number) => {
@@ -39,40 +40,59 @@ const base64encode = (input: ArrayBuffer) => {
 
 // Authorization Request: Creating the spotify auth url
 export const getSpotifyAuthURL = async (): Promise<string> => {
-  const scopes = "user-read-private user-read-email";
-  const codeVerifier = generateRandomString(64);
-  const hashed = await sha256(codeVerifier);
-  const codeChallenge = base64encode(hashed);
+  const existingCodeVerifier = window.localStorage.getItem("code_verifier");
+  let codeVerifier;
 
-  // Store code verifier in local storage
-  window.localStorage.setItem("code_verifier", codeVerifier);
-  console.log("set", codeChallenge);
+  if (existingCodeVerifier) {
+    codeVerifier = existingCodeVerifier;
+  } else {
+    codeVerifier = generateRandomString(64); // Generates a cryptographically sound random string of length 64
+    window.localStorage.setItem("code_verifier", codeVerifier);
+  }
 
-  return `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(
-    redirectUri
-  )}&scope=${encodeURIComponent(scopes)}&code_challenge=${encodeURIComponent(
-    codeChallenge
-  )}&code_challenge_method=S256`;
+  const scope = "user-read-private user-read-email";
+  const hashed = await sha256(codeVerifier); // Creates a SHA-256 hash of the code verifier. The resulting hashed value is an ArrayBuffer
+  const codeChallenge = base64encode(hashed); // Encodes the hashed value using Base64 URL encoding
+
+  window.localStorage.setItem("code_verifier", codeVerifier); // Store code verifier in local storage
+
+  const params = {
+    response_type: "code",
+    client_id: clientId,
+    scope,
+    code_challenge_method: "S256",
+    code_challenge: codeChallenge,
+    redirect_uri: redirectUri,
+  };
+
+  authUrl.search = new URLSearchParams(params).toString(); // Constructs the full authorization URL with the query parameters from the params object
+
+  return authUrl.toString(); // Redirects the user's browser to this URL
 };
 
 // Access Token Request: Getting the access token - Exchanging the auth code for an access token
 export const getAccessToken = async (code: string): Promise<TokenResponse> => {
-  const codeVerifier = window.localStorage.getItem("code_verifier");
-  console.log("get", codeVerifier);
+  const codeVerifier = localStorage.getItem("code_verifier");
 
   if (!codeVerifier) {
     throw new Error("Code verifier not found in local storage");
   }
 
+  const params = new URLSearchParams({
+    grant_type: "authorization_code",
+    code,
+    redirect_uri: redirectUri,
+    client_id: clientId,
+    code_verifier: codeVerifier,
+  });
+
+  console.log("Authorization Code:", code);
+  console.log("Code Verifier:", codeVerifier);
+  console.log("Params:", params.toString());
+
   const response = await api.post<TokenResponse>(
     "https://accounts.spotify.com/api/token",
-    new URLSearchParams({
-      grant_type: "authorization_code",
-      code,
-      redirect_uri: redirectUri,
-      client_id: clientId,
-      code_verifier: codeVerifier,
-    }).toString(),
+    params,
     {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -80,6 +100,9 @@ export const getAccessToken = async (code: string): Promise<TokenResponse> => {
       },
     }
   );
+
+  localStorage.setItem("access_token", response.data.access_token);
+  localStorage.removeItem("code_verifier");
 
   return response.data;
 };
