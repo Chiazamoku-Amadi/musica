@@ -3,12 +3,9 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { toggleTheme } from "../features/theme/themeSlice";
 import Search from "./Search";
 import User from "./User";
+import { toggleNavbar } from "../features/navbar/navbarSlice";
 
-interface TopbarProps {
-  setOpenNav: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const Topbar: React.FC<TopbarProps> = ({ setOpenNav }) => {
+const Topbar: React.FC = () => {
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
   const dispatch = useAppDispatch();
 
@@ -28,7 +25,7 @@ const Topbar: React.FC<TopbarProps> = ({ setOpenNav }) => {
           {isDarkMode ? (
             <Icon
               icon="entypo:light-up"
-              className={`text-primary-text hover:text-dark-navbar-bg text-lg py-1 cursor-pointer`}
+              className={`text-primary-text hover:text-dark-background text-lg py-1 cursor-pointer`}
             />
           ) : (
             <Icon
@@ -43,7 +40,7 @@ const Topbar: React.FC<TopbarProps> = ({ setOpenNav }) => {
         <Icon
           icon="pajamas:hamburger"
           className="flex md:hidden text-secondary-text cursor-pointer"
-          onClick={() => setOpenNav((prevOpenNav: boolean) => !prevOpenNav)}
+          onClick={() => dispatch(toggleNavbar())}
         />
       </div>
     </div>

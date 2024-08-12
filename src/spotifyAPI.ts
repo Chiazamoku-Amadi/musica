@@ -32,6 +32,75 @@ export const fetchPopularArtists = async (accessToken: string) => {
   return response.data.artists.items;
 };
 
+export const fetchRecommendedGenres = async (accessToken: string) => {
+  const response = await api.get("/recommendations/available-genre-seeds", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  // console.log(response.data.genres);
+  return response.data.genres;
+};
+
+export const fetchPopularShows = async (accessToken: string) => {
+  const response = await api.get("/search", {
+    params: {
+      q: "year:2024",
+      type: "show",
+      limit: "12",
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  // console.log(response.data.shows.items);
+  return response.data.shows.items;
+};
+
+export const fetchRecentlyPlayedTracks = async (accessToken: string) => {
+  const response = await api.get("/me/player/recently-played", {
+    params: {
+      limit: "12",
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  // console.log(response.data.items);
+  return response.data.items;
+};
+
+export const fetchSavedTracks = async (accessToken: string) => {
+  const response = await api.get("/me/tracks", {
+    params: {
+      limit: 12,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  // console.log(response.data.items);
+  return response.data.items;
+};
+
+export const fetchSavedShows = async (accessToken: string) => {
+  const response = await api.get("/me/shows", {
+    params: {
+      limit: 12,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  // console.log(response.data.items);
+  return response.data.items;
+};
+
 // export const fetchSpotifyData = async (
 //   endpoint: string,
 //   accessToken: string | null

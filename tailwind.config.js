@@ -11,9 +11,9 @@ export default {
         "primary-text": "#FFFFFF",
         "secondary-text": "#9A9A9A",
         dark: {
-          background: "#000000",
-          "navbar-bg": "#1A1A1A",
-          "topbar-bg": "#343434",
+          background: "#1A1A1A",
+          "navbar-bg": "#343434",
+          "topbar-bg": "#4d4d4d",
         },
         light: {
           background: "#FFFFFF",
