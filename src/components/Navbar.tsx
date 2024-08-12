@@ -1,18 +1,17 @@
 import { Icon } from "@iconify-icon/react";
 import { useEffect, useState } from "react";
 import { useAppSelector } from "../app/hooks";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { toggleNavbar } from "../features/navbar/navbarSlice";
 
-interface NavbarProps {
-  openNav: boolean;
-  setOpenNav: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
+const Navbar: React.FC = () => {
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
+  const openNav = useAppSelector((state) => state.navbar.openNav);
   const [currentPage, setCurrentPage] = useState<string | null>(null);
 
   const location = useLocation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setCurrentPage(location.pathname);
@@ -34,23 +33,23 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
       icon: <Icon icon="iconamoon:discover-fill" />,
       url: "/discover",
     },
-    {
-      title: "Recently Listened",
-      category: "Library",
-      icon: <Icon icon="mdi:recent" />,
-      url: "/recently-listened",
-    },
-    {
-      title: "Favorites",
-      category: "Library",
-      icon: <Icon icon="lets-icons:favorites-fill" />,
-      url: "/favorites",
-    },
+    // {
+    //   title: "Recently Listened",
+    //   category: "Library",
+    //   icon: <Icon icon="mdi:recent" />,
+    //   url: "/recently-listened",
+    // },
     {
       title: "My Playlists",
       category: "Playlist",
       icon: <Icon icon="ph:playlist-bold" />,
       url: "/my-playlists",
+    },
+    {
+      title: "Favorites",
+      category: "Playlist",
+      icon: <Icon icon="lets-icons:favorites-fill" />,
+      url: "/favorites",
     },
     {
       title: "Create New Playlist",
@@ -73,9 +72,9 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
   ];
 
   const menuCategory = menu.filter((menuItem) => menuItem.category === "Menu");
-  const libraryCategory = menu.filter(
-    (menuItem) => menuItem.category === "Library"
-  );
+  // const libraryCategory = menu.filter(
+  //   (menuItem) => menuItem.category === "Library"
+  // );
   const playlistCategory = menu.filter(
     (menuItem) => menuItem.category === "Playlist"
   );
@@ -84,6 +83,7 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
   );
 
   const hoverColor = isDarkMode ? "primary" : "dark-background";
+
   return (
     <aside
       className={`
@@ -117,7 +117,7 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
               className={`text-primary-text ${
                 isDarkMode ? "hover:text-primary" : "hover:text-dark-background"
               } cursor-pointer`}
-              onClick={() => setOpenNav((prevOpenNav: boolean) => !prevOpenNav)}
+              onClick={() => dispatch(toggleNavbar())}
             />
           ) : (
             <Icon
@@ -125,7 +125,7 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
               className={`text-primary-text ${
                 isDarkMode ? "hover:text-primary" : "hover:text-dark-background"
               } cursor-pointer`}
-              onClick={() => setOpenNav((prevOpenNav: boolean) => !prevOpenNav)}
+              onClick={() => dispatch(toggleNavbar())}
             />
           )}
         </div>
@@ -155,9 +155,10 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
 
               return (
                 <div key={index} className="group">
-                  <li
+                  <Link
+                    to={menuItem.url}
                     className={`flex justify-start items-center gap-3 text-base cursor-pointer ${
-                      openNav ? "pl-2" : `hover:text-${hoverColor} bg-opacity-0`
+                      openNav ? "pl-2" : `bg-opacity-0`
                     } ${
                       isCurrentPage
                         ? `text-${hoverColor} group-hover:text-opacity-80`
@@ -168,14 +169,14 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
                     <span className={`${openNav ? "block" : "hidden"} pt-1`}>
                       {menuItem.title}
                     </span>
-                  </li>
+                  </Link>
                 </div>
               );
             })}
           </div>
         </div>
 
-        <div
+        {/* <div
           className={`flex flex-col gap-1 ${
             openNav ? "items-start" : "items-center"
           }`}
@@ -197,9 +198,10 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
 
               return (
                 <div key={index} className="group">
-                  <li
+                  <Link
+                    to={menuItem.url}
                     className={`flex justify-start items-center gap-3 text-base cursor-pointer ${
-                      openNav ? "pl-2" : `hover:text-${hoverColor} bg-opacity-0`
+                      openNav ? "pl-2" : `bg-opacity-0`
                     } ${
                       isCurrentPage
                         ? `text-${hoverColor} group-hover:text-opacity-80`
@@ -210,12 +212,12 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
                     <span className={`${openNav ? "block" : "hidden"} pt-1`}>
                       {menuItem.title}
                     </span>
-                  </li>
+                  </Link>
                 </div>
               );
             })}
           </div>
-        </div>
+        </div> */}
 
         <div
           className={`flex flex-col gap-1 ${
@@ -240,9 +242,10 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
 
               return (
                 <div key={index} className="group">
-                  <li
+                  <Link
+                    to={menuItem.url}
                     className={`flex justify-start items-center gap-3 text-base cursor-pointer ${
-                      openNav ? "pl-2" : `hover:text-${hoverColor} bg-opacity-0`
+                      openNav ? "pl-2" : `bg-opacity-0`
                     } ${
                       isCurrentPage
                         ? `text-${hoverColor} group-hover:text-opacity-80`
@@ -253,7 +256,7 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
                     <span className={`${openNav ? "block" : "hidden"} pt-1`}>
                       {menuItem.title}
                     </span>
-                  </li>
+                  </Link>
                 </div>
               );
             })}
@@ -283,9 +286,10 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
 
               return (
                 <div key={index} className="group">
-                  <li
+                  <Link
+                    to={menuItem.url}
                     className={`flex justify-start items-center gap-3 text-base cursor-pointer ${
-                      openNav ? "pl-2" : `hover:text-${hoverColor} bg-opacity-0`
+                      openNav ? "pl-2" : `bg-opacity-0`
                     } ${
                       isCurrentPage
                         ? `text-${hoverColor} group-hover:text-opacity-80`
@@ -296,7 +300,7 @@ const Navbar: React.FC<NavbarProps> = ({ openNav, setOpenNav }) => {
                     <span className={`${openNav ? "block" : "hidden"} pt-1`}>
                       {menuItem.title}
                     </span>
-                  </li>
+                  </Link>
                 </div>
               );
             })}

@@ -20,7 +20,6 @@ interface Artist {
 }
 
 const Home: React.FC = () => {
-  const [openNav, setOpenNav] = useState(true);
   const [trendingAlbums, setTrendingAlbums] = useState<Album[]>([]);
   const [popularArtists, setPopularArtists] = useState<Artist[]>([]);
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
@@ -30,7 +29,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (accessToken) {
       fetchTrendingAlbums(accessToken)
-        .then(setTrendingAlbums)
+        .then((data) => setTrendingAlbums(data))
         .catch(console.error);
     }
   }, [accessToken]);
@@ -39,7 +38,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (accessToken) {
       fetchPopularArtists(accessToken)
-        .then(setPopularArtists)
+        .then((data) => setPopularArtists(data))
         .catch(console.error);
     }
   }, [accessToken]);
@@ -52,51 +51,50 @@ const Home: React.FC = () => {
           alt={album.name}
           className="w-full h-full object-top object-cover"
         />
+
         <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4">
-          <h3 className="text-base md:text-2xl font-semibold">{album.name}</h3>
-          <p className="text-base md:text-lg">
+          <p className="text-base md:text-2xl font-semibold">
             {album.artists.map((artist) => artist.name).join(", ")}
           </p>
+          <h3 className="text-sm md:text-base">{album.name}</h3>
         </div>
       </div>
     </SwiperSlide>
   ));
 
-  const artists = popularArtists.map((artist) => {
-    return (
-      <div key={artist.id} className="space-y-2">
-        <img
-          src={artist.images[0].url}
-          alt="album-image"
-          className="rounded-xl shadow-2xl h-52 w-full"
-        />
-        <p className="text-xs md:text-base">{artist.name}</p>
-      </div>
-    );
-  });
+  const artists = popularArtists.map((artist) => (
+    <div key={artist.id} className="space-y-2">
+      <img
+        src={artist.images[0].url}
+        alt="album-image"
+        className="rounded-xl shadow-2xl h-52 w-full"
+      />
+      <p className="text-xs md:text-sm">
+        {artist.name.length >= 20
+          ? `${artist.name.slice(0, 20)}...`
+          : artist.name}
+      </p>
+    </div>
+  ));
 
   return (
     <div className="flex justify-end overflow-hidden h-screen w-full">
-      <Navbar openNav={openNav} setOpenNav={setOpenNav} />
+      <Navbar />
 
       <main
         className={`${
           isDarkMode ? "bg-dark-background" : "bg-light-background"
         } overflow-y-auto h-screen w-full`}
       >
-        <Topbar setOpenNav={setOpenNav} />
+        <Topbar />
 
-        <section className="space-y-6 md:space-y-10 p-4 md:p-8 w-full">
-          <div
+        <div className="space-y-6 md:space-y-10 p-4 md:p-8 w-full">
+          <section
             className={`${
               isDarkMode ? "text-primary-text" : "text-dark-background"
             } w-full`}
           >
-            <h3
-              className={`text-2xl md:text-3xl font-medium mb-4 ${
-                isDarkMode ? "text-primary-text" : "text-dark-background"
-              }`}
-            >
+            <h3 className="text-2xl md:text-3xl font-medium mb-4">
               Trending Albums
             </h3>
 
@@ -112,9 +110,9 @@ const Home: React.FC = () => {
             >
               {albums}
             </Swiper>
-          </div>
+          </section>
 
-          <div
+          <section
             className={`${
               isDarkMode ? "text-primary-text" : "text-dark-background"
             } w-full`}
@@ -122,11 +120,11 @@ const Home: React.FC = () => {
             <h3 className="text-2xl md:text-3xl font-medium mb-4">
               Popular Artists
             </h3>
-            <div className="grid grid-cols-2 xs:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6 xs:gap-3">
+            <div className="grid grid-cols-2 xs:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6 xs:gap-x-3">
               {artists}
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
       </main>
     </div>
   );
