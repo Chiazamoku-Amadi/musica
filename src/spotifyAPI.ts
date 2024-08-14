@@ -3,7 +3,7 @@ import api from "./api";
 export const fetchTrendingAlbums = async (accessToken: string) => {
   const response = await api.get("/search", {
     params: {
-      q: "year:2020",
+      q: "year:2024",
       type: "album",
       limit: 5,
     },
@@ -12,7 +12,6 @@ export const fetchTrendingAlbums = async (accessToken: string) => {
     },
   });
 
-  // console.log(response.data);
   return response.data.albums.items;
 };
 
@@ -28,7 +27,6 @@ export const fetchPopularArtists = async (accessToken: string) => {
     },
   });
 
-  // console.log(response.data);
   return response.data.artists.items;
 };
 
@@ -39,7 +37,6 @@ export const fetchRecommendedGenres = async (accessToken: string) => {
     },
   });
 
-  // console.log(response.data.genres);
   return response.data.genres;
 };
 
@@ -55,7 +52,6 @@ export const fetchPopularShows = async (accessToken: string) => {
     },
   });
 
-  // console.log(response.data.shows.items);
   return response.data.shows.items;
 };
 
@@ -69,7 +65,6 @@ export const fetchRecentlyPlayedTracks = async (accessToken: string) => {
     },
   });
 
-  // console.log(response.data.items);
   return response.data.items;
 };
 
@@ -83,7 +78,6 @@ export const fetchSavedTracks = async (accessToken: string) => {
     },
   });
 
-  // console.log(response.data.items);
   return response.data.items;
 };
 
@@ -97,8 +91,34 @@ export const fetchSavedShows = async (accessToken: string) => {
     },
   });
 
-  // console.log(response.data.items);
   return response.data.items;
+};
+
+export const fetchCurrentUserPlaylists = async (accessToken: string) => {
+  const response = await api.get("/me/playlists", {
+    params: {
+      limit: 12,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  console.log(response.data.items);
+  return response.data.items;
+};
+
+export const fetchFeaturedPlaylists = async (accessToken: string) => {
+  const response = await api.get("/browse/featured-playlists", {
+    params: {
+      limit: 12,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data.playlists.items;
 };
 
 // export const fetchSpotifyData = async (
