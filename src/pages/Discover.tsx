@@ -7,6 +7,7 @@ import { fetchRecommendedGenres, fetchPopularShows } from "../spotifyAPI";
 interface Show {
   id: string;
   name: string;
+  publisher: string;
   images: { url: string }[];
 }
 
@@ -54,9 +55,17 @@ const Discover: React.FC = () => {
         alt="show-image"
         className="rounded-xl shadow-2xl h-52 w-full"
       />
-      <p className="text-xs md:text-sm">
-        {show.name.length >= 20 ? `${show.name.slice(0, 20)}...` : show.name}
-      </p>
+
+      <div>
+        <p className="text-xs md:text-sm">
+          {show.name.length >= 20 ? `${show.name.slice(0, 20)}...` : show.name}
+        </p>
+        <p className="text-[10px] md:text-xs text-secondary-text">
+          {show.publisher.length >= 20
+            ? `${show.publisher.slice(0, 20)}...`
+            : show.publisher}
+        </p>
+      </div>
     </div>
   ));
 

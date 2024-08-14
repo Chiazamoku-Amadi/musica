@@ -5,6 +5,7 @@ import Callback from "./pages/Callback";
 import Login from "./pages/Login";
 import Discover from "./pages/Discover";
 import Favorites from "./pages/Favorites";
+import Playlists from "./pages/Playlists";
 
 const App: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const App: React.FC = () => {
         <Route path="/callback" element={<Callback />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/favorites" element={<Favorites />} />
+        <Route path="/playlists" element={<Playlists />} />
       </Routes>
     </>
   );

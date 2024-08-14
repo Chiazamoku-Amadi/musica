@@ -33,27 +33,21 @@ const Navbar: React.FC = () => {
       icon: <Icon icon="iconamoon:discover-fill" />,
       url: "/discover",
     },
-    // {
-    //   title: "Recently Listened",
-    //   category: "Library",
-    //   icon: <Icon icon="mdi:recent" />,
-    //   url: "/recently-listened",
-    // },
-    {
-      title: "My Playlists",
-      category: "Playlist",
-      icon: <Icon icon="ph:playlist-bold" />,
-      url: "/my-playlists",
-    },
     {
       title: "Favorites",
-      category: "Playlist",
+      category: "Library",
       icon: <Icon icon="lets-icons:favorites-fill" />,
       url: "/favorites",
     },
     {
+      title: "Playlists",
+      category: "Library",
+      icon: <Icon icon="ph:playlist-bold" />,
+      url: "/playlists",
+    },
+    {
       title: "Create New Playlist",
-      category: "Playlist",
+      category: "Library",
       icon: <Icon icon="solar:pen-new-square-linear" />,
       url: "/create-playlist",
     },
@@ -72,11 +66,8 @@ const Navbar: React.FC = () => {
   ];
 
   const menuCategory = menu.filter((menuItem) => menuItem.category === "Menu");
-  // const libraryCategory = menu.filter(
-  //   (menuItem) => menuItem.category === "Library"
-  // );
   const playlistCategory = menu.filter(
-    (menuItem) => menuItem.category === "Playlist"
+    (menuItem) => menuItem.category === "Library"
   );
   const generalCategory = menu.filter(
     (menuItem) => menuItem.category === "General"
@@ -161,7 +152,7 @@ const Navbar: React.FC = () => {
                       openNav ? "pl-2" : `bg-opacity-0`
                     } ${
                       isCurrentPage
-                        ? `text-${hoverColor} group-hover:text-opacity-80`
+                        ? `text-${hoverColor} group-hover:text-opacity-80 font-medium`
                         : `text-primary-text group-hover:text-${hoverColor} group-hover:text-opacity-80`
                     } rounded w-full`}
                   >
@@ -176,49 +167,6 @@ const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* <div
-          className={`flex flex-col gap-1 ${
-            openNav ? "items-start" : "items-center"
-          }`}
-        >
-          <h4
-            className={`text-secondary-text ${
-              openNav ? "text-sm" : "text-xs"
-            } px-6 pb-1`}
-          >
-            Library
-          </h4>
-          <div
-            className={`flex flex-col ${
-              openNav ? "gap-2" : "gap-4"
-            } pl-4 pr-6 w-full`}
-          >
-            {libraryCategory.map((menuItem, index) => {
-              const isCurrentPage = currentPage === menuItem.url;
-
-              return (
-                <div key={index} className="group">
-                  <Link
-                    to={menuItem.url}
-                    className={`flex justify-start items-center gap-3 text-base cursor-pointer ${
-                      openNav ? "pl-2" : `bg-opacity-0`
-                    } ${
-                      isCurrentPage
-                        ? `text-${hoverColor} group-hover:text-opacity-80`
-                        : `text-primary-text group-hover:text-${hoverColor} group-hover:text-opacity-80`
-                    } rounded w-full`}
-                  >
-                    {menuItem.icon}
-                    <span className={`${openNav ? "block" : "hidden"} pt-1`}>
-                      {menuItem.title}
-                    </span>
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-        </div> */}
-
         <div
           className={`flex flex-col gap-1 ${
             openNav ? "items-start" : "items-center"
@@ -229,7 +177,7 @@ const Navbar: React.FC = () => {
               openNav ? "text-sm" : "text-xs"
             } px-6 pb-1`}
           >
-            Playlist
+            Library
           </h4>
 
           <div
