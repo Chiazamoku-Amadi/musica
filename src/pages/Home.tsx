@@ -6,22 +6,11 @@ import { fetchPopularArtists, fetchTrendingAlbums } from "../spotifyAPI";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
-interface Album {
-  id: string;
-  name: string;
-  images: { url: string }[];
-  artists: { name: string }[];
-}
-
-interface Artist {
-  id: string;
-  name: string;
-  images: { url: string }[];
-}
+import { AlbumResponse, ArtistResponse } from "../types/types";
 
 const Home: React.FC = () => {
-  const [trendingAlbums, setTrendingAlbums] = useState<Album[]>([]);
-  const [popularArtists, setPopularArtists] = useState<Artist[]>([]);
+  const [trendingAlbums, setTrendingAlbums] = useState<AlbumResponse[]>([]);
+  const [popularArtists, setPopularArtists] = useState<ArtistResponse[]>([]);
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
   const accessToken = useAppSelector((state) => state.auth.accessToken);
 
