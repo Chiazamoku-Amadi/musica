@@ -4,6 +4,7 @@ import { useAppSelector } from "../app/hooks";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toggleNavbar } from "../features/navbar/navbarSlice";
+import { toggleModal } from "../features/modal/modalSlice";
 
 const Navbar: React.FC = () => {
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
@@ -45,32 +46,11 @@ const Navbar: React.FC = () => {
       icon: <Icon icon="ph:playlist-bold" />,
       url: "/playlists",
     },
-    {
-      title: "Create New Playlist",
-      category: "Library",
-      icon: <Icon icon="solar:pen-new-square-linear" />,
-      url: "/create-playlist",
-    },
-    {
-      title: "Settings",
-      category: "General",
-      icon: <Icon icon="solar:settings-bold" />,
-      url: "/settings",
-    },
-    {
-      title: "Log Out",
-      category: "General",
-      icon: <Icon icon="solar:logout-2-outline" />,
-      url: "",
-    },
   ];
 
   const menuCategory = menu.filter((menuItem) => menuItem.category === "Menu");
   const playlistCategory = menu.filter(
     (menuItem) => menuItem.category === "Library"
-  );
-  const generalCategory = menu.filter(
-    (menuItem) => menuItem.category === "General"
   );
 
   const hoverColor = isDarkMode ? "primary" : "dark-background";
@@ -154,7 +134,7 @@ const Navbar: React.FC = () => {
                       isCurrentPage
                         ? `text-${hoverColor} group-hover:text-opacity-80 font-medium`
                         : `text-primary-text group-hover:text-${hoverColor} group-hover:text-opacity-80`
-                    } rounded w-full`}
+                    } w-full`}
                   >
                     {menuItem.icon}
                     <span className={`${openNav ? "block" : "hidden"} pt-1`}>
@@ -196,9 +176,9 @@ const Navbar: React.FC = () => {
                       openNav ? "pl-2" : `bg-opacity-0`
                     } ${
                       isCurrentPage
-                        ? `text-${hoverColor} group-hover:text-opacity-80`
+                        ? `text-${hoverColor} group-hover:text-opacity-80 font-medium`
                         : `text-primary-text group-hover:text-${hoverColor} group-hover:text-opacity-80`
-                    } rounded w-full`}
+                    } w-full`}
                   >
                     {menuItem.icon}
                     <span className={`${openNav ? "block" : "hidden"} pt-1`}>
@@ -208,51 +188,43 @@ const Navbar: React.FC = () => {
                 </div>
               );
             })}
+          </div>
+
+          <div
+            className={`group ${
+              openNav ? "pt-[6px]" : "pt-[14px]"
+            } pl-4 pr-6 w-full`}
+          >
+            <li
+              className={`flex justify-start items-center gap-3 text-base text-primary-text group-hover:text-${hoverColor} group-hover:text-opacity-80 cursor-pointer ${
+                openNav ? "pl-2" : `bg-opacity-0`
+              } w-full`}
+              onClick={() => dispatch(toggleModal())}
+            >
+              <Icon icon="mi:add" />
+              <span className={`${openNav ? "block" : "hidden"} pt-1`}>
+                Create New Playlist
+              </span>
+            </li>
           </div>
         </div>
 
-        <div
-          className={`flex flex-col gap-1 ${
-            openNav ? "items-start" : "items-center"
-          }`}
-        >
-          <h4
-            className={`text-secondary-text ${
-              openNav ? "text-sm" : "text-xs"
-            } px-6 pb-1`}
+        <div className={`group ${openNav ? "px-4" : "px-2"} w-full`}>
+          <Link
+            to="/log-out"
+            className={`flex justify-start items-center gap-3 text-base cursor-pointer border-t border-t-zinc-600 pl-2 pt-4 ${
+              !openNav && "bg-opacity-0"
+            } ${
+              currentPage === "Log Out"
+                ? `text-${hoverColor} group-hover:text-opacity-80 font-medium`
+                : `text-primary-text group-hover:text-${hoverColor} group-hover:text-opacity-80`
+            } w-full`}
           >
-            General
-          </h4>
-
-          <div
-            className={`flex flex-col ${
-              openNav ? "gap-2" : "gap-4"
-            } pl-4 pr-6 w-full`}
-          >
-            {generalCategory.map((menuItem, index) => {
-              const isCurrentPage = currentPage === menuItem.url;
-
-              return (
-                <div key={index} className="group">
-                  <Link
-                    to={menuItem.url}
-                    className={`flex justify-start items-center gap-3 text-base cursor-pointer ${
-                      openNav ? "pl-2" : `bg-opacity-0`
-                    } ${
-                      isCurrentPage
-                        ? `text-${hoverColor} group-hover:text-opacity-80`
-                        : `text-primary-text group-hover:text-${hoverColor} group-hover:text-opacity-80`
-                    } rounded w-full`}
-                  >
-                    {menuItem.icon}
-                    <span className={`${openNav ? "block" : "hidden"} pt-1`}>
-                      {menuItem.title}
-                    </span>
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
+            <Icon icon="solar:logout-2-outline" />
+            <span className={`${openNav ? "block" : "hidden"} pt-1`}>
+              Log Out
+            </span>
+          </Link>
         </div>
       </section>
     </aside>

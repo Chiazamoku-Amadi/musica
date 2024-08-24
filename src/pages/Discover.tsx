@@ -3,16 +3,10 @@ import { useAppSelector } from "../app/hooks";
 import Navbar from "../components/Navbar";
 import Topbar from "../components/Topbar";
 import { fetchRecommendedGenres, fetchPopularShows } from "../spotifyAPI";
-
-interface Show {
-  id: string;
-  name: string;
-  publisher: string;
-  images: { url: string }[];
-}
+import { ShowResponse } from "../types/types";
 
 const Discover: React.FC = () => {
-  const [popularShows, setPopularShows] = useState<Show[]>([]);
+  const [popularShows, setPopularShows] = useState<ShowResponse[]>([]);
   const [recommededGenres, setRecommededGenres] = useState<string[]>([]);
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
   const accessToken = useAppSelector((state) => state.auth.accessToken);

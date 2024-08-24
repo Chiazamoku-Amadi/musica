@@ -2,12 +2,18 @@ import { configureStore } from "@reduxjs/toolkit";
 import themeReducer from "../features/theme/themeSlice";
 import authReducer from "../features/auth/authSlice";
 import navbarReducer from "../features/navbar/navbarSlice";
+import modalReducer from "../features/modal/modalSlice";
+import currentUserReducer from "../features/currentUserSlice";
+import currentUserPlaylistsReducer from "../features/currentUserPlaylistsSlice";
 
 export const store = configureStore({
   reducer: {
     theme: themeReducer,
     auth: authReducer,
     navbar: navbarReducer,
+    modal: modalReducer,
+    currentUser: currentUserReducer,
+    currentUserPlaylists: currentUserPlaylistsReducer,
   },
 });
 

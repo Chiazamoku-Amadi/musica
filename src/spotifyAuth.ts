@@ -1,13 +1,6 @@
 // Creating Utility Functions for Authentication
 import api from "./api";
-
-export interface TokenResponse {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
-  refresh_token: string;
-  scope: string;
-}
+import { TokenResponse } from "./types/types";
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
 const clientSecret = import.meta.env.VITE_SPOTIFY_CLIENT_SECRET;
@@ -51,7 +44,7 @@ export const getSpotifyAuthURL = async (): Promise<string> => {
   }
 
   const scope =
-    "user-read-private user-read-email user-read-recently-played user-library-read";
+    "user-read-private user-read-email user-read-recently-played user-library-read playlist-modify-public playlist-modify-private playlist-read-private";
   const hashed = await sha256(codeVerifier); // Creates a SHA-256 hash of the code verifier. The resulting hashed value is an ArrayBuffer
   const codeChallenge = base64encode(hashed); // Encodes the hashed value using Base64 URL encoding
 

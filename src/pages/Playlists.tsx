@@ -6,30 +6,36 @@ import {
   fetchCurrentUserPlaylists,
   fetchFeaturedPlaylists,
 } from "../spotifyAPI";
-
-interface Playlist {
-  id: string;
-  name: string;
-  images: { url: string }[];
-  owner: { display_name: string };
-}
+import { PlaylistResponse } from "../types/types";
+import playlistAvatar from "../assets/playlist-avatar.png";
+import { setCurrentUserPlaylists } from "../features/currentUserPlaylistsSlice";
+import { useDispatch } from "react-redux";
+import { Link, Route, Routes } from "react-router-dom";
+import Playlist from "./Playlist";
 
 const MyPlaylists = () => {
-  const [currentUserPlaylists, setCurrentUserPlaylists] = useState<Playlist[]>(
-    []
-  );
-  const [featuredPlaylists, setFeaturedPlaylists] = useState<Playlist[]>([]);
+  const [featuredPlaylists, setFeaturedPlaylists] = useState<
+    PlaylistResponse[]
+  >([]);
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
   const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const currentUserPlaylists = useAppSelector(
+    (state) => state.currentUserPlaylists
+  );
+  const dispatch = useDispatch();
 
+  console.log(currentUserPlaylists);
+
+  // Fetching current user's playlists
   useEffect(() => {
     if (accessToken) {
       fetchCurrentUserPlaylists(accessToken)
-        .then((data) => setCurrentUserPlaylists(data))
+        .then((data) => dispatch(setCurrentUserPlaylists(data)))
         .catch(console.error);
     }
-  }, [accessToken]);
+  }, [accessToken, dispatch]);
 
+  // Fetching featured playlists
   useEffect(() => {
     if (accessToken) {
       fetchFeaturedPlaylists(accessToken)
@@ -38,9 +44,43 @@ const MyPlaylists = () => {
     }
   }, [accessToken]);
 
-  console.log(currentUserPlaylists);
-  console.log(featuredPlaylists);
+  // Rendering current user's playlists
+  const userPlaylists = currentUserPlaylists.map((playlist) => (
+    <Link to={`${playlist.id}`} key={playlist.id} className="space-y-2">
+      {playlist.images ? (
+        <img
+          src={playlist.images[0].url}
+          alt="album-image"
+          className="rounded-xl shadow-2xl h-52 w-full"
+        />
+      ) : (
+        <div
+          className={`flex justify-center items-center rounded-lg ${
+            isDarkMode ? "bg-dark-navbar-bg" : "bg-dark-topbar-bg bg-opacity-80"
+          }`}
+        >
+          <img
+            src={playlistAvatar}
+            alt="playlist-avatar"
+            className="object-contain w-40 h-52"
+          />
+        </div>
+      )}
 
+      <div>
+        <p className="text-xs md:text-sm">
+          {playlist.name.length >= 20
+            ? `${playlist.name.slice(0, 20)}...`
+            : playlist.name}{" "}
+        </p>
+        <p className="text-[10px] md:text-xs text-secondary-text">
+          {playlist.owner.display_name}
+        </p>
+      </div>
+    </Link>
+  ));
+
+  // Rendering featured playlists
   const playlists = featuredPlaylists.map((playlist) => (
     <div key={playlist.id} className="space-y-2">
       <img
@@ -62,69 +102,57 @@ const MyPlaylists = () => {
     </div>
   ));
 
-  const userPlaylists = currentUserPlaylists.map((playlist) => (
-    <div key={playlist.id} className="space-y-2">
-      <img
-        src={playlist.images[0].url}
-        alt="album-image"
-        className="rounded-xl shadow-2xl h-52 w-full"
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <div className="flex justify-end overflow-hidden h-screen w-full">
+            <Navbar />
+
+            <main
+              className={`${
+                isDarkMode ? "bg-dark-background" : "bg-light-background"
+              } overflow-y-auto h-screen w-full`}
+            >
+              <Topbar />
+
+              <div className="space-y-6 md:space-y-10 p-4 md:p-8 w-full">
+                <section
+                  className={`${
+                    isDarkMode ? "text-primary-text" : "text-dark-background"
+                  } w-full`}
+                >
+                  <h3 className="text-2xl md:text-3xl font-medium mb-4">
+                    My Playlists
+                  </h3>
+
+                  <div className="grid grid-cols-2 xs:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6 xs:gap-x-3">
+                    {userPlaylists}
+                  </div>
+                </section>
+
+                <section
+                  className={`${
+                    isDarkMode ? "text-primary-text" : "text-dark-background"
+                  } w-full`}
+                >
+                  <h3 className="text-2xl md:text-3xl font-medium mb-4">
+                    Featured Playlists
+                  </h3>
+
+                  <div className="grid grid-cols-2 xs:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6 xs:gap-x-3">
+                    {playlists}
+                  </div>
+                </section>
+              </div>
+            </main>
+          </div>
+        }
       />
 
-      <div>
-        <p className="text-xs md:text-sm">
-          {playlist.name.length >= 20
-            ? `${playlist.name.slice(0, 20)}...`
-            : playlist.name}{" "}
-        </p>
-        <p className="text-[10px] md:text-xs text-secondary-text">
-          {playlist.owner.display_name}
-        </p>
-      </div>
-    </div>
-  ));
-
-  return (
-    <div className="flex justify-end overflow-hidden h-screen w-full">
-      <Navbar />
-
-      <main
-        className={`${
-          isDarkMode ? "bg-dark-background" : "bg-light-background"
-        } overflow-y-auto h-screen w-full`}
-      >
-        <Topbar />
-
-        <div className="space-y-6 md:space-y-10 p-4 md:p-8 w-full">
-          <section
-            className={`${
-              isDarkMode ? "text-primary-text" : "text-dark-background"
-            } w-full`}
-          >
-            <h3 className="text-2xl md:text-3xl font-medium mb-4">
-              Featured Playlists
-            </h3>
-
-            <div className="grid grid-cols-2 xs:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6 xs:gap-x-3">
-              {playlists}
-            </div>
-          </section>
-
-          <section
-            className={`${
-              isDarkMode ? "text-primary-text" : "text-dark-background"
-            } w-full`}
-          >
-            <h3 className="text-2xl md:text-3xl font-medium mb-4">
-              My Playlists
-            </h3>
-
-            <div className="grid grid-cols-2 xs:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-6 xs:gap-x-3">
-              {userPlaylists}
-            </div>
-          </section>
-        </div>
-      </main>
-    </div>
+      <Route path=":id" element={<Playlist />} />
+    </Routes>
   );
 };
 

@@ -7,43 +7,14 @@ import {
   fetchRecentlyPlayedTracks,
   fetchSavedTracks,
 } from "../spotifyAPI";
-
-interface Artist {
-  name: string;
-}
-
-interface Album {
-  images: { url: string }[];
-}
-
-interface Track {
-  id: string;
-  name: string;
-  artists: Artist[];
-  album: Album;
-}
-
-interface Tracks {
-  track: Track;
-}
-
-interface Show {
-  id: string;
-  name: string;
-  publisher: string;
-  images: { url: string }[];
-}
-
-interface SavedShows {
-  show: Show;
-}
+import { SavedShowsResponse, TracksResponse } from "../types/types";
 
 const Favorites: React.FC = () => {
-  const [recentlyPlayedTracks, setRecentlyPlayedTracks] = useState<Tracks[]>(
-    []
-  );
-  const [savedTracks, setSavedTracks] = useState<Tracks[]>([]);
-  const [savedShows, setSavedShows] = useState<SavedShows[]>([]);
+  const [recentlyPlayedTracks, setRecentlyPlayedTracks] = useState<
+    TracksResponse[]
+  >([]);
+  const [savedTracks, setSavedTracks] = useState<TracksResponse[]>([]);
+  const [savedShows, setSavedShows] = useState<SavedShowsResponse[]>([]);
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
   const accessToken = useAppSelector((state) => state.auth.accessToken);
 
@@ -75,14 +46,13 @@ const Favorites: React.FC = () => {
   }, [accessToken]);
 
   // Create an array of key-value pairs [trackId, track]
-  const trackEntries: [string, Tracks][] = recentlyPlayedTracks.map((track) => [
-    track.track.id,
-    track,
-  ]);
+  const trackEntries: [string, TracksResponse][] = recentlyPlayedTracks.map(
+    (track) => [track.track.id, track]
+  );
 
   // Create a Map with the track entries (Note: Track entries are already structured like Maps)
   // This also filters trackEntries such that there are no repeated key-value pairs
-  const trackMap = new Map<string, Tracks>(trackEntries);
+  const trackMap = new Map<string, TracksResponse>(trackEntries);
 
   // Create an array from the values of the Map(trackMap)
   const filteredRecentTracks = Array.from(trackMap.values());
