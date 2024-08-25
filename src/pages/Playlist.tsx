@@ -60,15 +60,15 @@ const Playlist = () => {
 
       // Conditionally returns the difference
       if (minutes < 60) {
-        return `${minutes} minutes ago`;
+        return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
       } else if (hours < 24) {
-        return `${hours} hours ago`;
+        return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
       } else if (days < 7) {
-        return `${days} days ago`;
+        return `${days} ${days === 1 ? "day" : "days"} ago`;
       } else if (weeks < 52) {
-        return `${weeks} weeks ago`;
+        return `${weeks} ${weeks === 1 ? "week" : "weeks"} ago`;
       } else {
-        return `${years} years ago`;
+        return `${years} ${years === 1 ? "year" : "years"} ago`;
       }
     };
 
