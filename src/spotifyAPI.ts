@@ -15,7 +15,7 @@ export const fetchCurrentUserData = async (accessToken: string) => {
 export const fetchTrendingAlbums = async (accessToken: string) => {
   const response = await api.get("/search", {
     params: {
-      q: "year:2024",
+      q: "year:2022",
       type: "album",
       limit: 10,
     },
@@ -164,4 +164,32 @@ export const createPlaylist = async (
   );
 
   return response.data;
+};
+
+// To get a playlist
+export const fetchPlaylist = async (
+  accessToken: string,
+  playlistId: string
+) => {
+  const response = await api.get(`/playlists/${playlistId}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+// To get the tracks in a playlist
+export const fetchPlaylistTracks = async (
+  accessToken: string,
+  playlistId: string
+) => {
+  const response = await api.get(`/playlists/${playlistId}/tracks`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data.items;
 };
