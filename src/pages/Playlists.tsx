@@ -24,8 +24,6 @@ const MyPlaylists = () => {
   );
   const dispatch = useDispatch();
 
-  console.log(currentUserPlaylists);
-
   // Fetching current user's playlists
   useEffect(() => {
     if (accessToken) {
@@ -82,7 +80,7 @@ const MyPlaylists = () => {
 
   // Rendering featured playlists
   const playlists = featuredPlaylists.map((playlist) => (
-    <div key={playlist.id} className="space-y-2">
+    <Link to={`${playlist.id}`} key={playlist.id} className="space-y-2">
       <img
         src={playlist.images[0].url}
         alt="album-image"
@@ -99,7 +97,7 @@ const MyPlaylists = () => {
           {playlist.owner.display_name}
         </p>
       </div>
-    </div>
+    </Link>
   ));
 
   return (
@@ -151,7 +149,7 @@ const MyPlaylists = () => {
         }
       />
 
-      <Route path=":id" element={<Playlist />} />
+      <Route path=":playlistId" element={<Playlist />} />
     </Routes>
   );
 };

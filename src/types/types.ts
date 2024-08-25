@@ -48,9 +48,12 @@ export interface TrackResponse {
   name: string;
   artists: ArtistResponse[];
   album: AlbumResponse;
+  added_at: string;
+  duration_ms: number;
 }
 
 export interface TracksResponse {
+  added_at: string | number | Date;
   track: TrackResponse;
 }
 
@@ -61,8 +64,10 @@ export interface SavedShowsResponse {
 export interface PlaylistResponse {
   id: string;
   name: string;
+  description: string;
   images: { url: string }[];
   owner: { display_name: string };
+  public: boolean;
 }
 
 export interface NewPlaylistFormData {

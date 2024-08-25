@@ -35,6 +35,7 @@ const Favorites: React.FC = () => {
         .catch(console.error);
     }
   }, [accessToken]);
+  console.log(savedTracks);
 
   // Fetching current user's saved shows
   useEffect(() => {
