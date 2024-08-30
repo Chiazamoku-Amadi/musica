@@ -68,10 +68,16 @@ export interface PlaylistResponse {
   images: { url: string }[];
   owner: { display_name: string };
   public: boolean;
+  tracks: { items: TracksResponse[] };
 }
 
 export interface NewPlaylistFormData {
   title: string;
   description: string;
   isPublic: boolean;
+}
+
+export interface AddToPlaylistModalProps {
+  currentPlaylist: PlaylistResponse;
+  playlistId: string;
 }

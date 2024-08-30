@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { useAppSelector } from "../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 import { useDispatch } from "react-redux";
-import { toggleModal } from "../features/modal/modalSlice";
+import { toggleModal } from "../../features/modal/createNewPlaylistModalSlice";
 import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
-import { createPlaylist, fetchCurrentUserPlaylists } from "../spotifyAPI";
-import { NewPlaylistFormData } from "../types/types";
-import { setCurrentUserPlaylists } from "../features/currentUserPlaylistsSlice";
+import { createPlaylist, fetchCurrentUserPlaylists } from "../../spotifyAPI";
+import { NewPlaylistFormData } from "../../types/types";
+import { setCurrentUserPlaylists } from "../../features/currentUserPlaylistsSlice";
 
 const CreateNewPlaylistModal = () => {
   const [playlistData, setPlaylistData] = useState<NewPlaylistFormData>({
@@ -14,11 +14,14 @@ const CreateNewPlaylistModal = () => {
     isPublic: false,
   });
   const modalRef = useRef<HTMLFormElement>(null);
-  const modalIsOpen = useAppSelector((state) => state.modal.isOpen);
+  const modalIsOpen = useAppSelector(
+    (state) => state.createNewPlaylistModal.isOpen
+  );
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const currentUserId = useAppSelector((state) => state.currentUser.id);
 
   const dispatch = useDispatch();
+  console.log(modalIsOpen);
 
   // Effect for handling clicking outside the create new playlist modal to close the modal
   useEffect(() => {
@@ -79,7 +82,7 @@ const CreateNewPlaylistModal = () => {
       );
 
       // Close the modal
-      dispatch(toggleModal());
+      handleCloseModal();
 
       // Fetch the updated playlists after the new one is created
       const updatedPlaylists = await fetchCurrentUserPlaylists(accessToken);

@@ -4,7 +4,7 @@ import { useAppSelector } from "../app/hooks";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { toggleNavbar } from "../features/navbar/navbarSlice";
-import { toggleModal } from "../features/modal/modalSlice";
+import { toggleModal } from "../features/modal/createNewPlaylistModalSlice";
 
 const Navbar: React.FC = () => {
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
