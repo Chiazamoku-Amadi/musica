@@ -19,6 +19,7 @@ const Playlist = () => {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const currentPlaylist = useAppSelector((state) => state.currentPlaylist);
   const currentPlaylistId = useParams().playlistId;
+  console.log(currentPlaylist);
 
   const dispatch = useDispatch();
 
@@ -150,7 +151,8 @@ const Playlist = () => {
 
               <div className="flex justify-between items-end h-4/5">
                 <div className="flex justify-start items-end gap-x-8">
-                  {currentPlaylist.images ? (
+                  {currentPlaylist.images &&
+                  currentPlaylist.images.length > 0 ? (
                     <img
                       src={currentPlaylist.images[0].url}
                       alt="playlist-image"
