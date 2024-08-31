@@ -8,6 +8,8 @@ import {
   fetchSavedTracks,
 } from "../spotifyAPI";
 import { SavedShowsResponse, TracksResponse } from "../types/types";
+import Track from "../components/Track";
+import Show from "../components/Show";
 
 const Favorites: React.FC = () => {
   const [recentlyPlayedTracks, setRecentlyPlayedTracks] = useState<
@@ -35,7 +37,6 @@ const Favorites: React.FC = () => {
         .catch(console.error);
     }
   }, [accessToken]);
-  console.log(savedTracks);
 
   // Fetching current user's saved shows
   useEffect(() => {
@@ -60,72 +61,39 @@ const Favorites: React.FC = () => {
 
   // Rendering the recently played tracks
   const recentTracks = filteredRecentTracks.map((track) => {
-    const artists = track.track.artists.map((artist) => artist.name).join(", ");
-
     return (
-      <div key={track.track.id} className="space-y-2">
-        <img
-          src={track.track.album.images[0].url}
-          alt="track-image"
-          className="rounded-xl shadow-2xl h-52 w-full"
-        />
-
-        <div>
-          <p className="text-xs md:text-sm">
-            {artists.length >= 20 ? `${artists.slice(0, 20)}...` : artists}
-          </p>
-          <p className="text-[10px] md:text-xs text-secondary-text">
-            {track.track.name}
-          </p>
-        </div>
-      </div>
+      <Track
+        key={track.track.id}
+        id={track.track.id}
+        name={track.track.name}
+        album={track.track.album}
+        artists={track.track.artists}
+      />
     );
   });
 
   // Rendering current user's saved tracks
   const tracks = savedTracks.map((track) => {
-    const artists = track.track.artists.map((artist) => artist.name).join(", ");
-
     return (
-      <div key={track.track.id} className="space-y-2">
-        <img
-          src={track.track.album.images[0].url}
-          alt="track-image"
-          className="rounded-xl shadow-2xl h-52 w-full"
-        />
-
-        <div>
-          <p className="text-xs md:text-sm">
-            {artists.length >= 20 ? `${artists.slice(0, 20)}...` : artists}
-          </p>
-          <p className="text-[10px] md:text-xs text-secondary-text">
-            {track.track.name}
-          </p>
-        </div>
-      </div>
+      <Track
+        key={track.track.id}
+        id={track.track.id}
+        name={track.track.name}
+        album={track.track.album}
+        artists={track.track.artists}
+      />
     );
   });
 
   // Rendering current user's saved shows
   const shows = savedShows.map((show) => (
-    <div key={show.show.id} className="space-y-2">
-      <img
-        src={show.show.images[0].url}
-        alt="show-image"
-        className="rounded-xl shadow-2xl h-52 w-full"
-      />
-
-      <div>
-        <p className="text-xs md:text-sm">
-          {show.show.name.length >= 20
-            ? `${show.show.name.slice(0, 20)}...`
-            : show.show.name}
-        </p>
-        <p className="text-[10px] md:text-xs text-secondary-text">
-          {`${show.show.name.slice(0, 20)}...`}
-        </p>
-      </div>
-    </div>
+    <Show
+      key={show.show.id}
+      id={show.show.id}
+      name={show.show.name}
+      publisher={show.show.publisher}
+      images={show.show.images}
+    />
   ));
 
   return (

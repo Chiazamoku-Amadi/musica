@@ -7,6 +7,7 @@ import Discover from "./pages/Discover";
 import Favorites from "./pages/Favorites";
 import Playlists from "./pages/Playlists";
 import CreateNewPlaylistModal from "./components/modal/CreateNewPlaylistModal";
+import Player from "./components/Player";
 
 const App: React.FC = () => {
   return (
@@ -22,6 +23,7 @@ const App: React.FC = () => {
       </Routes>
 
       <CreateNewPlaylistModal />
+      <Player />
     </>
   );
 };

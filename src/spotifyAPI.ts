@@ -180,6 +180,7 @@ export const fetchPlaylist = async (
   return response.data;
 };
 
+// To get recommended tracks
 export const fetchTracks = async (accessToken: string) => {
   const response = await api.get("/search", {
     params: {
@@ -216,4 +217,16 @@ export const addTracksToPlaylist = async (
   );
 
   return response;
+};
+
+// To get the currently playing track
+export const fetchCurrentlyPlayingTrack = async (accessToken: string) => {
+  const response = await api.get("me/player/currently-playing", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  console.log(response.data);
+  return response.data;
 };

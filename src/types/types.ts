@@ -81,3 +81,10 @@ export interface AddToPlaylistModalProps {
   currentPlaylist: PlaylistResponse;
   playlistId: string;
 }
+
+export interface TrackProps {
+  id: string;
+  name: string;
+  album: AlbumResponse;
+  artists: ArtistResponse[];
+}

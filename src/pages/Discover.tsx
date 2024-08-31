@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Topbar from "../components/Topbar";
 import { fetchRecommendedGenres, fetchPopularShows } from "../spotifyAPI";
 import { ShowResponse } from "../types/types";
+import Show from "../components/Show";
 
 const Discover: React.FC = () => {
   const [popularShows, setPopularShows] = useState<ShowResponse[]>([]);
@@ -43,24 +44,13 @@ const Discover: React.FC = () => {
   ));
 
   const shows = popularShows.map((show) => (
-    <div key={show.id} className="space-y-2">
-      <img
-        src={show.images[0].url}
-        alt="show-image"
-        className="rounded-xl shadow-2xl h-52 w-full"
-      />
-
-      <div>
-        <p className="text-xs md:text-sm">
-          {show.name.length >= 20 ? `${show.name.slice(0, 20)}...` : show.name}
-        </p>
-        <p className="text-[10px] md:text-xs text-secondary-text">
-          {show.publisher.length >= 20
-            ? `${show.publisher.slice(0, 20)}...`
-            : show.publisher}
-        </p>
-      </div>
-    </div>
+    <Show
+      key={show.id}
+      id={show.id}
+      name={show.name}
+      publisher={show.publisher}
+      images={show.images}
+    />
   ));
 
   return (
