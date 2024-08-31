@@ -180,16 +180,40 @@ export const fetchPlaylist = async (
   return response.data;
 };
 
-// To get the tracks in a playlist
-export const fetchPlaylistTracks = async (
-  accessToken: string,
-  playlistId: string
-) => {
-  const response = await api.get(`/playlists/${playlistId}/tracks`, {
+export const fetchTracks = async (accessToken: string) => {
+  const response = await api.get("/search", {
+    params: {
+      q: "year:2022",
+      type: "track",
+      limit: 10,
+    },
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
   });
 
-  return response.data.items;
+  return response.data.tracks.items;
+};
+
+// To add tracks to a playlist
+export const addTracksToPlaylist = async (
+  accessToken: string | null,
+  playlistId: string,
+  uri: string[]
+) => {
+  const response = await api.post(
+    `playlists/${playlistId}/tracks`,
+    {
+      uris: uri,
+      position: 0,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return response;
 };

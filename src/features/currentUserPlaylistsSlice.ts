@@ -1,13 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Playlist } from "../types/types";
+import { PlaylistResponse } from "../types/types";
 
-const initialState: Playlist[] = [];
+const initialState: PlaylistResponse[] = [];
 
 const currentUserPlaylistsSlice = createSlice({
   name: "currentUserPlaylists",
   initialState,
   reducers: {
-    setCurrentUserPlaylists: (state, action: PayloadAction<Playlist[]>) => {
+    setCurrentUserPlaylists: (
+      state,
+      action: PayloadAction<PlaylistResponse[]>
+    ) => {
       return action.payload;
     },
   },

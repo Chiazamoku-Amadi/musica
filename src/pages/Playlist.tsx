@@ -8,94 +8,103 @@ import { toggleTheme } from "../features/theme/themeSlice";
 import { toggleNavbar } from "../features/navbar/navbarSlice";
 import playlistAvatar from "../assets/playlist-avatar.png";
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { fetchPlaylist, fetchPlaylistTracks } from "../spotifyAPI";
-import { PlaylistResponse, TracksResponse } from "../types/types";
+import { useEffect } from "react";
+import { fetchPlaylist } from "../spotifyAPI";
+import { toggleModal } from "../features/modal/addTracksToPlaylistModalSlice";
+import AddToPlaylistModal from "../components/modal/AddToPlaylistModal";
+import { setCurrentPlaylist } from "../features/currentPlaylistSlice";
 
 const Playlist = () => {
-  const [clickedPlaylistData, setClickedPlaylistData] =
-    useState<PlaylistResponse | null>(null);
-  const [playlistTracks, setPlaylistTracks] = useState<TracksResponse[]>([]);
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
   const accessToken = useAppSelector((state) => state.auth.accessToken);
-  const clickedPlaylistId = useParams().playlistId;
+  const currentPlaylist = useAppSelector((state) => state.currentPlaylist);
+  const currentPlaylistId = useParams().playlistId;
+  console.log(currentPlaylist);
 
   const dispatch = useDispatch();
 
-  console.log(playlistTracks);
-
-  // Fetching clicked playlist
+  // Fetching current playlist
   useEffect(() => {
-    if (accessToken && clickedPlaylistId) {
-      fetchPlaylist(accessToken, clickedPlaylistId)
-        .then((data) => setClickedPlaylistData(data))
+    if (accessToken && currentPlaylistId) {
+      fetchPlaylist(accessToken, currentPlaylistId)
+        .then((data) =>
+          dispatch(
+            setCurrentPlaylist({
+              id: data.id,
+              name: data.name,
+              description: data.description,
+              images: data.images,
+              owner: data.owner,
+              public: data.public,
+              tracks: data.tracks,
+            })
+          )
+        )
         .catch(console.error);
     }
-  }, [accessToken, clickedPlaylistId]);
+  }, [accessToken, currentPlaylistId, dispatch]);
 
-  // Fetching a playlist's tracks
-  useEffect(() => {
-    if (accessToken && clickedPlaylistId) {
-      fetchPlaylistTracks(accessToken, clickedPlaylistId)
-        .then((data) => setPlaylistTracks(data))
-        .catch(console.error);
-    }
-  }, [accessToken, clickedPlaylistId]);
+  const tracks =
+    currentPlaylist &&
+    currentPlaylist.tracks.items.map((track, index) => {
+      const timeAdded = new Date(track.added_at).toLocaleDateString();
+      const minutes = Math.floor(track.track.duration_ms / 60000);
+      const seconds = track.track.duration_ms % 60;
 
-  const tracks = playlistTracks.map((track, index) => {
-    const timeAdded = new Date(track.added_at).toLocaleDateString();
-    const minutes = Math.floor(track.track.duration_ms / 60000);
-    const seconds = track.track.duration_ms % 60;
+      const timeSince = (date: string | number | Date): string => {
+        const now = new Date(); // Returns the current date in a Date object format
+        const trackDate = new Date(date); // Converts the date the track was added into a Date object
+        const differenceInMS = now.getTime() - trackDate.getTime(); // Returns the difference between the current date and the date the track was added in ms
 
-    const timeSince = (date: string | number | Date): string => {
-      const now = new Date(); // Returns the current date in a Date object format
-      const trackDate = new Date(date); // Converts the date the track was added into a Date object
-      const differenceInMS = now.getTime() - trackDate.getTime(); // Returns the difference between the current date and the date the track was added in ms
+        const minutes = Math.floor(differenceInMS / (1000 * 60)); // Converts the difference to minutes
+        const hours = Math.floor(differenceInMS / (1000 * 60 * 60)); // Converts the difference to hours
+        const days = Math.floor(differenceInMS / (1000 * 60 * 60 * 24)); // Converts the difference to days
+        const weeks = Math.floor(differenceInMS / (1000 * 60 * 60 * 24 * 7)); // Converts the difference to weeks
+        const years = Math.floor(
+          differenceInMS / (1000 * 60 * 60 * 24 * 7 * 52)
+        ); // Converts the difference to years
 
-      const minutes = Math.floor(differenceInMS / (1000 * 60)); // Converts the difference to minutes
-      const hours = Math.floor(differenceInMS / (1000 * 60 * 60)); // Converts the difference to hours
-      const days = Math.floor(differenceInMS / (1000 * 60 * 60 * 24)); // Converts the difference to days
-      const weeks = Math.floor(differenceInMS / (1000 * 60 * 60 * 24 * 7)); // Converts the difference to weeks
-      const years = Math.floor(differenceInMS / (1000 * 60 * 60 * 24 * 7 * 52)); // Converts the difference to years
+        // Conditionally returns the difference
+        if (minutes < 60) {
+          return `${minutes} ${minutes === 1 ? "minute" : "minutes"} ago`;
+        } else if (hours < 24) {
+          return `${hours} ${hours === 1 ? "hour" : "hours"} ago`;
+        } else if (days < 7) {
+          return `${days} ${days === 1 ? "day" : "days"} ago`;
+        } else if (weeks < 52) {
+          return `${weeks} ${weeks === 1 ? "week" : "weeks"} ago`;
+        } else {
+          return `${years} ${years === 1 ? "year" : "years"} ago`;
+        }
+      };
 
-      // Conditionally returns the difference
-      if (minutes < 60) {
-        return `${minutes} minutes ago`;
-      } else if (hours < 24) {
-        return `${hours} hours ago`;
-      } else if (days < 7) {
-        return `${days} days ago`;
-      } else if (weeks < 52) {
-        return `${weeks} weeks ago`;
-      } else {
-        return `${years} years ago`;
-      }
-    };
-
-    return (
-      <tr key={index} className="odd:bg-white even:bg-light-topbar-bg border-b">
-        <th scope="row" className="px-6 py-4 w-[5%] font-medium">
-          {index + 1}
-        </th>
-        <td className="px-6 py-4 w-[30%]">
-          {track.track.name.length >= 25
-            ? `${track.track.name.slice(0, 25)}...`
-            : track.track.name}
-        </td>
-        <td className="px-6 py-4 w-[30%]">
-          {track.track.album.name.length >= 25
-            ? `${track.track.album.name.slice(0, 25)}...`
-            : track.track.album.name}
-        </td>
-        <td className="px-6 py-4 w-[25%]">{timeSince(timeAdded)}</td>
-        <td className="px-6 py-4 w-[10%]">{`${minutes}:${seconds}`}</td>
-      </tr>
-    );
-  });
+      return (
+        <tr
+          key={track.track.id}
+          className="odd:bg-white even:bg-light-topbar-bg border-b"
+        >
+          <td scope="row" className="px-6 py-4 w-[5%] font-medium">
+            {index + 1}
+          </td>
+          <td className="px-6 py-4 w-[30%]">
+            {track.track.name.length >= 25
+              ? `${track.track.name.slice(0, 25)}...`
+              : track.track.name}
+          </td>
+          <td className="px-6 py-4 w-[30%]">
+            {track.track.album.name.length >= 25
+              ? `${track.track.album.name.slice(0, 25)}...`
+              : track.track.album.name}
+          </td>
+          <td className="px-6 py-4 w-[25%]">{timeSince(timeAdded)}</td>
+          <td className="px-6 py-4 w-[10%]">{`${minutes}:${seconds}`}</td>
+        </tr>
+      );
+    });
 
   return (
     <>
-      {clickedPlaylistData ? (
+      {currentPlaylist ? (
         <div className="flex justify-end overflow-hidden h-screen w-full">
           <Navbar />
 
@@ -140,46 +149,60 @@ const Playlist = () => {
                 </div>
               </div>
 
-              <div className="flex justify-start items-end gap-x-8 h-4/5">
-                {clickedPlaylistData.images ? (
-                  <img
-                    src={clickedPlaylistData.images[0].url}
-                    alt="playlist-image"
-                    className="object-cover rounded-lg w-40 h-40"
-                  />
-                ) : (
-                  <div
-                    className={`flex justify-center items-center rounded-lg ${
-                      isDarkMode
-                        ? "bg-dark-navbar-bg"
-                        : "bg-dark-topbar-bg bg-opacity-80"
-                    }`}
-                  >
+              <div className="flex justify-between items-end h-4/5">
+                <div className="flex justify-start items-end gap-x-8">
+                  {currentPlaylist.images &&
+                  currentPlaylist.images.length > 0 ? (
                     <img
-                      src={playlistAvatar}
-                      alt="playlist-avatar"
-                      className="object-cover w-40 h-40 "
+                      src={currentPlaylist.images[0].url}
+                      alt="playlist-image"
+                      className="object-cover rounded-lg w-40 h-40"
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div
+                      className={`flex justify-center items-center rounded-lg ${
+                        isDarkMode
+                          ? "bg-dark-navbar-bg"
+                          : "bg-dark-topbar-bg bg-opacity-80"
+                      }`}
+                    >
+                      <img
+                        src={playlistAvatar}
+                        alt="playlist-avatar"
+                        className="object-cover w-40 h-40 "
+                      />
+                    </div>
+                  )}
 
-                <div className="flex flex-col justify-center items-start gap-y-2">
-                  <p className="text-xs md:text-sm text-secondary-text">
-                    {clickedPlaylistData.public
-                      ? "Public Playlist"
-                      : "Private Playlist"}
-                  </p>
-                  <h4
-                    className={`text-lg md:text-6xl text-dark-background font-medium ${
-                      isDarkMode ? "text-opacity-100" : "text-opacity-80"
-                    }`}
-                  >
-                    {clickedPlaylistData.name}
-                  </h4>
-                  <p className="text-xs md:text-sm text-secondary-text font-bold">
-                    {clickedPlaylistData.owner.display_name}
-                  </p>
+                  <div className="flex flex-col justify-center items-start gap-y-2">
+                    <p className="text-xs md:text-sm text-secondary-text">
+                      {currentPlaylist.public
+                        ? "Public Playlist"
+                        : "Private Playlist"}
+                    </p>
+                    <h4
+                      className={`text-lg md:text-6xl text-dark-background font-medium ${
+                        isDarkMode ? "text-opacity-100" : "text-opacity-80"
+                      }`}
+                    >
+                      {currentPlaylist.name}
+                    </h4>
+                    <p className="text-xs md:text-sm text-secondary-text font-bold">
+                      {currentPlaylist.owner.display_name}
+                    </p>
+                  </div>
                 </div>
+
+                <button
+                  onClick={() => dispatch(toggleModal())}
+                  className={`${
+                    isDarkMode
+                      ? "bg-dark-navbar-bg hover:bg-opacity-90"
+                      : "bg-dark-topbar-bg bg-opacity-80 hover:bg-opacity-70"
+                  } text-white py-2 px-8 rounded-lg`}
+                >
+                  Add Songs
+                </button>
               </div>
             </section>
 
@@ -219,6 +242,11 @@ const Playlist = () => {
               </table>
             </section>
           </main>
+
+          <AddToPlaylistModal
+            currentPlaylist={currentPlaylist}
+            playlistId={currentPlaylistId || ""}
+          />
         </div>
       ) : (
         <p>Loading...</p>

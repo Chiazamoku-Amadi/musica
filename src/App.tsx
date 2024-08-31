@@ -6,7 +6,7 @@ import Login from "./pages/Login";
 import Discover from "./pages/Discover";
 import Favorites from "./pages/Favorites";
 import Playlists from "./pages/Playlists";
-import CreateNewPlaylistModal from "./components/CreateNewPlaylistModal";
+import CreateNewPlaylistModal from "./components/modal/CreateNewPlaylistModal";
 
 const App: React.FC = () => {
   return (

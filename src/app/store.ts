@@ -2,18 +2,22 @@ import { configureStore } from "@reduxjs/toolkit";
 import themeReducer from "../features/theme/themeSlice";
 import authReducer from "../features/auth/authSlice";
 import navbarReducer from "../features/navbar/navbarSlice";
-import modalReducer from "../features/modal/modalSlice";
+import createNewPlaylistModalReducer from "../features/modal/createNewPlaylistModalSlice";
 import currentUserReducer from "../features/currentUserSlice";
 import currentUserPlaylistsReducer from "../features/currentUserPlaylistsSlice";
+import addTracksToPlaylistModalReducer from "../features/modal/addTracksToPlaylistModalSlice";
+import currentPlaylistReducer from "../features/currentPlaylistSlice";
 
 export const store = configureStore({
   reducer: {
     theme: themeReducer,
     auth: authReducer,
     navbar: navbarReducer,
-    modal: modalReducer,
+    createNewPlaylistModal: createNewPlaylistModalReducer,
     currentUser: currentUserReducer,
     currentUserPlaylists: currentUserPlaylistsReducer,
+    addTracksToPlaylistModal: addTracksToPlaylistModalReducer,
+    currentPlaylist: currentPlaylistReducer,
   },
 });
 
