@@ -1,5 +1,4 @@
-import { useDispatch } from "react-redux";
-import { useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import Navbar from "../components/Navbar";
 import Search from "../components/Search";
 import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
@@ -12,16 +11,25 @@ import { useEffect } from "react";
 import { fetchPlaylist } from "../spotifyAPI";
 import { toggleModal } from "../features/modal/addTracksToPlaylistModalSlice";
 import AddToPlaylistModal from "../components/modal/AddToPlaylistModal";
-import { setCurrentPlaylist } from "../features/currentPlaylistSlice";
+import { setCurrentPlaylist } from "../features/playlist/currentPlaylistSlice";
+import {
+  playTrack,
+  setCurrentlyPlayingTrack,
+} from "../features/player/playerSlice";
+import { CurrentlyPlayingTrackResponse } from "../types/types";
 
 const Playlist = () => {
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
   const accessToken = useAppSelector((state) => state.auth.accessToken);
-  const currentPlaylist = useAppSelector((state) => state.currentPlaylist);
+  const currentPlaylist = useAppSelector(
+    (state) => state.currentPlaylist.currentPlaylist
+  );
+  const currentlyPlayingTrack = useAppSelector(
+    (state) => state.player.currentlyPlayingTrack
+  );
   const currentPlaylistId = useParams().playlistId;
-  console.log(currentPlaylist);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   // Fetching current playlist
   useEffect(() => {
@@ -78,10 +86,49 @@ const Playlist = () => {
         }
       };
 
+      // Handles clicking a track to play it
+      const handleTrackClick = async () => {
+        const currentTrack: CurrentlyPlayingTrackResponse = {
+          is_playing: true, // We want the track to start playing once clicked
+          progress_ms: 0,
+          item: {
+            id: track.track.id,
+            name: track.track.name,
+            album: track.track.album,
+            artists: track.track.artists,
+            duration_ms: track.track.duration_ms,
+            added_at: track.track.added_at,
+            preview_url: track.track.preview_url,
+          },
+        };
+
+        // Dispatch the action to set the currently playing track
+        dispatch(setCurrentlyPlayingTrack(currentTrack));
+
+        // Dispatch the action to play the track
+        dispatch(playTrack());
+      };
+
+      let currentTrack;
+      if (track.track.id === currentlyPlayingTrack?.item.id) {
+        currentTrack = track.track;
+      }
+
       return (
         <tr
           key={track.track.id}
-          className="odd:bg-white even:bg-light-topbar-bg border-b"
+          className={`border-b cursor-pointer hover:text-primary-text ${
+            isDarkMode ? "hover:bg-[#a1a1a1]" : "hover:bg-[#b8b8b8]"
+          }
+            ${
+              currentTrack
+                ? `${
+                    isDarkMode ? "bg-[#a1a1a1]" : "bg-[#b8b8b8]"
+                  } text-primary-text`
+                : "odd:bg-white even:bg-light-topbar-bg"
+            }
+          `}
+          onClick={handleTrackClick}
         >
           <td scope="row" className="px-6 py-4 w-[5%] font-medium">
             {index + 1}
@@ -97,7 +144,9 @@ const Playlist = () => {
               : track.track.album.name}
           </td>
           <td className="px-6 py-4 w-[25%]">{timeSince(timeAdded)}</td>
-          <td className="px-6 py-4 w-[10%]">{`${minutes}:${seconds}`}</td>
+          <td className="px-6 py-4 w-[10%]">{`${minutes}:${
+            seconds < 10 ? "0" : ""
+          }${seconds}`}</td>
         </tr>
       );
     });

@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { setAccessToken } from "../features/auth/authSlice";
 import { getAccessToken } from "../spotifyAuth";
 import { TokenResponse } from "../types/types";
+import { useAppDispatch } from "../app/hooks";
 
 const Callback: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const location = useLocation();
   const navigate = useNavigate();
 

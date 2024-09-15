@@ -1,14 +1,13 @@
 import { useEffect } from "react";
 import { fetchCurrentUserData } from "../spotifyAPI";
 import user from "../assets/user.png";
-import { useAppSelector } from "../app/hooks";
-import { useDispatch } from "react-redux";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { setCurrentUser } from "../features/currentUserSlice";
 
 const User = () => {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const currentUser = useAppSelector((state) => state.currentUser);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (accessToken) {
