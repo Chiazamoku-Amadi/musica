@@ -44,7 +44,7 @@ export const getSpotifyAuthURL = async (): Promise<string> => {
   }
 
   const scope =
-    "user-read-private user-read-email user-read-recently-played user-library-read playlist-modify-public playlist-modify-private playlist-read-private";
+    "user-read-private user-read-email user-read-recently-played user-library-read playlist-modify-public playlist-modify-private playlist-read-private user-read-currently-playing user-modify-playback-state user-read-playback-state";
   const hashed = await sha256(codeVerifier); // Creates a SHA-256 hash of the code verifier. The resulting hashed value is an ArrayBuffer
   const codeChallenge = base64encode(hashed); // Encodes the hashed value using Base64 URL encoding
 

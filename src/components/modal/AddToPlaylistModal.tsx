@@ -1,15 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   addTracksToPlaylist,
   fetchPlaylist,
   fetchTracks,
 } from "../../spotifyAPI";
-import { AddToPlaylistModalProps, TrackResponse } from "../../types/types";
-import { useDispatch } from "react-redux";
+import { PlaylistResponse, TrackResponse } from "../../types/types";
 import { toggleModal } from "../../features/modal/addTracksToPlaylistModalSlice";
 import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
-import { setCurrentPlaylist } from "../../features/currentPlaylistSlice";
+import { setCurrentPlaylist } from "../../features/playlist/currentPlaylistSlice";
+
+interface AddToPlaylistModalProps {
+  currentPlaylist: PlaylistResponse;
+  playlistId: string;
+}
 
 const AddToPlaylistModal: React.FC<AddToPlaylistModalProps> = ({
   currentPlaylist,
@@ -26,9 +30,7 @@ const AddToPlaylistModal: React.FC<AddToPlaylistModalProps> = ({
   );
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
 
-  const dispatch = useDispatch();
-  console.log(currentPlaylist.tracks.items);
-  console.log(selectedTracks);
+  const dispatch = useAppDispatch();
 
   // Fetching tracks
   useEffect(() => {
@@ -128,8 +130,6 @@ const AddToPlaylistModal: React.FC<AddToPlaylistModalProps> = ({
     const trackUri = `spotify:track:${selectedTrack.id}`;
     trackUris.push(trackUri);
   });
-
-  console.log(trackUris);
 
   const handleAddTracks = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

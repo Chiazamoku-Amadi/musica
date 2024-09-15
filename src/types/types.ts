@@ -6,10 +6,6 @@ export interface TokenResponse {
   scope: string;
 }
 
-export interface AuthState {
-  accessToken: string | null;
-}
-
 export interface UserResponse {
   id: string | null;
   name: string | null;
@@ -50,6 +46,7 @@ export interface TrackResponse {
   album: AlbumResponse;
   added_at: string;
   duration_ms: number;
+  preview_url: string;
 }
 
 export interface TracksResponse {
@@ -77,14 +74,15 @@ export interface NewPlaylistFormData {
   isPublic: boolean;
 }
 
-export interface AddToPlaylistModalProps {
-  currentPlaylist: PlaylistResponse;
-  playlistId: string;
+export interface CurrentlyPlayingTrackResponse {
+  is_playing: boolean;
+  progress_ms: number;
+  item: TrackResponse;
 }
 
-export interface TrackProps {
+export interface Device {
   id: string;
+  is_active: boolean;
   name: string;
-  album: AlbumResponse;
-  artists: ArtistResponse[];
+  volume_percent: BigInteger;
 }

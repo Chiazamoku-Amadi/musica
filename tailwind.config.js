@@ -6,6 +6,7 @@ export default {
       screens: {
         xs: "425px",
       },
+
       colors: {
         primary: "#7261a3",
         "primary-text": "#FFFFFF",
@@ -24,6 +25,10 @@ export default {
 
       fontFamily: {
         sans: ["Laila", "serif"],
+      },
+
+      zIndex: {
+        100: "100",
       },
     },
   },

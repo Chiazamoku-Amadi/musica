@@ -1,4 +1,5 @@
 import api from "./api";
+import { Device } from "./types/types";
 
 // To get current user's data
 export const fetchCurrentUserData = async (accessToken: string) => {
@@ -227,6 +228,80 @@ export const fetchCurrentlyPlayingTrack = async (accessToken: string) => {
     },
   });
 
-  console.log(response.data);
+  return response.data;
+};
+
+// To start/resume playback for a track
+// Suggestion: When a non-premium subscriber clicks on the play/pause button, let them get an alert that says it's a premium feature
+// However, I believe all users probably have access to the preview. If this is so, then the alert should come immediately the track ends (instead of "LISTEN ON SPOTIFY")
+// NB: PREMIUM FEATURE
+export const playCurrentTrack = async (accessToken: string, id: string) => {
+  try {
+    // Get available devices
+    const devices = await fetchAvailableDevices(accessToken);
+
+    if (devices.length === 0) {
+      console.error("No devices available");
+      return;
+    }
+
+    // Optionally transfer playback to the first available device
+    const activeDevice = devices.find((device: Device) => device.is_active);
+
+    if (!activeDevice) {
+      // Transfer playback to the first available device
+      await transferPlayback(accessToken, devices[0].id);
+    }
+
+    // Play the track
+    const response = await api.put(
+      "me/player/play",
+      {
+        uris: [`spotify:track:${id}`],
+        position_ms: 0,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error playing track", error);
+  }
+};
+
+// To get available devices connectedto user's account
+export const fetchAvailableDevices = async (accessToken: string) => {
+  const response = await api.get("/me/player/devices", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data.devices;
+};
+
+// To transfer playback state to a particular device
+export const transferPlayback = async (
+  accessToken: string,
+  deviceId: string
+) => {
+  const response = await api.put(
+    "/me/player",
+    {
+      device_ids: [deviceId],
+      play: true,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
   return response.data;
 };

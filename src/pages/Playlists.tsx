@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import Navbar from "../components/Navbar";
 import Topbar from "../components/Topbar";
 import {
@@ -8,8 +8,7 @@ import {
 } from "../spotifyAPI";
 import { PlaylistResponse } from "../types/types";
 import playlistAvatar from "../assets/playlist-avatar.png";
-import { setCurrentUserPlaylists } from "../features/currentUserPlaylistsSlice";
-import { useDispatch } from "react-redux";
+import { setCurrentUserPlaylists } from "../features/playlist/currentUserPlaylistsSlice";
 import { Link, Route, Routes } from "react-router-dom";
 import Playlist from "./Playlist";
 
@@ -22,7 +21,7 @@ const MyPlaylists = () => {
   const currentUserPlaylists = useAppSelector(
     (state) => state.currentUserPlaylists
   );
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   // Fetching current user's playlists
   useEffect(() => {

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { PlaylistResponse } from "../types/types";
+import { PlaylistResponse } from "../../types/types";
 
 const initialState: PlaylistResponse[] = [];
 

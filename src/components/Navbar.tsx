@@ -1,8 +1,7 @@
 import { Icon } from "@iconify-icon/react";
 import { useEffect, useState } from "react";
-import { useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { Link, useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { toggleNavbar } from "../features/navbar/navbarSlice";
 import { toggleModal } from "../features/modal/createNewPlaylistModalSlice";
 
@@ -12,14 +11,11 @@ const Navbar: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<string | null>(null);
 
   const location = useLocation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     setCurrentPage(location.pathname);
   }, [location]);
-
-  console.log(location.pathname);
-  console.log(currentPage);
 
   const menu = [
     {

@@ -33,11 +33,11 @@ const Discover: React.FC = () => {
   const genres = recommededGenres.slice(0, 20).map((genre, index) => (
     <p
       key={index}
-      className={`text-sm md:text-base font-medium mb-4 hover:text-opacity-80 hover:border-opacity-80 border ${
+      className={`text-sm md:text-base font-medium mb-4 border ${
         isDarkMode
           ? "text-light-topbar-bg border-light-topbar-bg"
           : "text-dark-navbar-bg border-dark-topbar-bg"
-      } px-6 py-1 rounded-full cursor-pointer`}
+      } px-6 py-1 rounded-full`}
     >
       {genre}
     </p>

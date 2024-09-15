@@ -68,6 +68,9 @@ const Favorites: React.FC = () => {
         name={track.track.name}
         album={track.track.album}
         artists={track.track.artists}
+        duration_ms={track.track.duration_ms}
+        added_at={track.track.added_at}
+        preview_url={track.track.preview_url}
       />
     );
   });
@@ -81,6 +84,9 @@ const Favorites: React.FC = () => {
         name={track.track.name}
         album={track.track.album}
         artists={track.track.artists}
+        duration_ms={track.track.duration_ms}
+        added_at={track.track.added_at}
+        preview_url={track.track.preview_url}
       />
     );
   });

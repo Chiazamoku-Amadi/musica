@@ -4,9 +4,10 @@ import authReducer from "../features/auth/authSlice";
 import navbarReducer from "../features/navbar/navbarSlice";
 import createNewPlaylistModalReducer from "../features/modal/createNewPlaylistModalSlice";
 import currentUserReducer from "../features/currentUserSlice";
-import currentUserPlaylistsReducer from "../features/currentUserPlaylistsSlice";
+import currentUserPlaylistsReducer from "../features/playlist/currentUserPlaylistsSlice";
 import addTracksToPlaylistModalReducer from "../features/modal/addTracksToPlaylistModalSlice";
-import currentPlaylistReducer from "../features/currentPlaylistSlice";
+import currentPlaylistReducer from "../features/playlist/currentPlaylistSlice";
+import playerReducer from "../features/player/playerSlice";
 
 export const store = configureStore({
   reducer: {
@@ -18,6 +19,7 @@ export const store = configureStore({
     currentUserPlaylists: currentUserPlaylistsReducer,
     addTracksToPlaylistModal: addTracksToPlaylistModalReducer,
     currentPlaylist: currentPlaylistReducer,
+    player: playerReducer,
   },
 });
 
