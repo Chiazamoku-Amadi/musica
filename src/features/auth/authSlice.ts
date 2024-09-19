@@ -13,11 +13,11 @@ const authSlice = createSlice({
   reducers: {
     setAccessToken: (state, action: PayloadAction<string>) => {
       state.accessToken = action.payload;
-      localStorage.setItem("spotify_access_token", action.payload);
+      localStorage.setItem("access_token", action.payload);
     },
     clearAccessToken: (state) => {
       state.accessToken = null;
-      localStorage.removeItem("spotify_access_token");
+      localStorage.removeItem("access_token");
     },
   },
 });
