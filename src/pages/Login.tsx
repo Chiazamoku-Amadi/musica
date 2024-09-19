@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getSpotifyAuthURL } from "../spotifyAuth";
-import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
+import { Icon } from "@iconify-icon/react";
 
 const Login = () => {
   const [authUrl, setAuthUrl] = useState<string | null>(null);
@@ -34,8 +34,6 @@ const Login = () => {
         {authUrl ? (
           <a
             href={authUrl}
-            target="_blank"
-            rel="noopener noreferrer"
             className="bg-dark-background text-primary-text rounded-full py-4 px-10 hover:opacity-90"
           >
             Login with Spotify

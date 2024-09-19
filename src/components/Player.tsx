@@ -9,7 +9,9 @@ const Player = () => {
   );
   const isPlaying = useAppSelector((state) => state.player.isPlaying);
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const promptRef = useRef<HTMLDivElement>(null);
   const [showNavigateToSpotifyPrompt, setShowNavigateToSpotifyPrompt] =
     useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -45,8 +47,31 @@ const Player = () => {
     }
   });
 
+  // Effect for handling clicking outside the create new playlist modal to close the modal
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        promptRef.current &&
+        !promptRef.current.contains(event.target as Node)
+      ) {
+        setShowNavigateToSpotifyPrompt(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dispatch]);
+
   // Handles what happens when the song preview ends
   const handleAudioEnd = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      dispatch(pauseTrack());
+    }
+
     setShowNavigateToSpotifyPrompt(true);
   };
 
@@ -99,14 +124,14 @@ const Player = () => {
 
   return (
     <>
-      {currentlyPlayingTrack && (
+      {accessToken && currentlyPlayingTrack ? (
         <div
-          className={`fixed bottom-0 z-100 backdrop-filter backdrop-blur-lg bg-opacity-80 flex justify-between items-center gap-16 ${
+          className={`fixed bottom-0 z-100 backdrop-filter backdrop-blur-lg bg-opacity-80 flex md:flex-row flex-col justify-between items-center gap-4 md:gap-16 ${
             isDarkMode ? "bg-dark-topbar-bg" : "bg-light-topbar-bg"
           } ${!currentlyPlayingTrack && "hidden"} px-4 md:px-8 py-4 w-full`}
         >
           {/* Track Information Section */}
-          <div className="flex justify-start items-end gap-4 w-1/4">
+          <div className="flex justify-start items-end gap-4 md:w-1/4 w-full">
             <img
               src={currentlyPlayingTrack.item.album.images[0].url}
               alt="track-image"
@@ -128,8 +153,7 @@ const Player = () => {
           </div>
 
           {/* Player Controls Section */}
-          <div className="flex flex-col justify-center items-center gap-4 w-1/2">
-            {/* <ProgressBar /> */}
+          <div className="flex flex-col justify-center items-center gap-2 md:gap-4 md:w-1/2 w-full">
             <div className="flex justify-between items-center gap-2 text-xs w-full">
               <p>{formatTime(currentTime + 0.5)}</p>
               <input
@@ -148,31 +172,31 @@ const Player = () => {
             <div className="flex justify-center items-center gap-6 w-full">
               <Icon
                 icon="ph:shuffle-light"
-                className="text-xl text-secondary-text"
+                className="text-base md:text-xl text-secondary-text"
               />
               <Icon
                 icon="ph:skip-back-light"
-                className="text-xl text-secondary-text"
+                className="text-base md:text-xl text-secondary-text"
               />
 
               <Icon
                 icon={`${
                   isPlaying ? "ph:pause-circle-light" : "ph:play-circle-light"
                 }`}
-                className="text-3xl cursor-pointer"
+                className="text-2xl md:text-3xl cursor-pointer"
                 onClick={handlePlayPauseClick}
               />
 
               <Icon
                 icon="ph:skip-forward-light"
-                className="text-xl text-secondary-text"
+                className="text-base md:text-xl text-secondary-text"
               />
               <Icon
                 icon="ph:repeat-light"
-                className="text-xl text-secondary-text"
+                className="text-base md:text-xl text-secondary-text"
               />
-              {/* <Icon icon="ph:repeat-fill" className="text-xl text-secondary-text" /> */}
-              {/* <Icon icon="ph:repeat-once-fill" className="text-xl text-secondary-text" /> */}
+              {/* <Icon icon="ph:repeat-fill" className="text-base md:text-xl text-secondary-text" /> */}
+              {/* <Icon icon="ph:repeat-once-fill" className="text-base md:text-xl text-secondary-text" /> */}
             </div>
           </div>
 
@@ -183,95 +207,96 @@ const Player = () => {
           ></audio>
 
           {/* Volume Control Section */}
-          <div className="flex justify-end items-center gap-4 w-1/4">
-            <Icon
-              icon="ph:heart-light"
-              className="text-xl text-secondary-text"
-            />
+          <div className="flex justify-start items-center gap-0 md:gap-4 md:w-1/4 w-full">
+            <label
+              htmlFor="volume"
+              className="flex justify-between items-center gap-2 w-full"
+            >
+              <Icon
+                icon="ph:speaker-low-light"
+                className="text-base md:text-xl cursor-pointer"
+                onClick={() => handleVolumeChange(-0.1)}
+              />
 
-            <div className="4/5">
-              <label
-                htmlFor="volume"
-                className="flex justify-end items-center gap-2"
-              >
-                <Icon
-                  icon="ph:speaker-low-light"
-                  className="text-xl cursor-pointer"
-                  onClick={() => handleVolumeChange(-0.1)}
-                />
+              <input
+                type="range"
+                name="volume"
+                id="volume"
+                min="0"
+                max="100"
+                step="10"
+                value={Math.round(
+                  audioRef.current?.volume ? audioRef.current?.volume * 100 : 0
+                )}
+                onChange={(e) => {
+                  if (audioRef.current) {
+                    audioRef.current.volume = Number(e.target.value) / 100;
+                  }
+                }}
+                className="h-1 w-full"
+              />
 
-                <input
-                  type="range"
-                  name="volume"
-                  id="volume"
-                  min="0"
-                  max="100"
-                  step="10"
-                  value={Math.round(
-                    audioRef.current?.volume
-                      ? audioRef.current?.volume * 100
-                      : 0
-                  )}
-                  onChange={(e) => {
-                    if (audioRef.current) {
-                      audioRef.current.volume = Number(e.target.value) / 100;
-                    }
-                  }}
-                  className="h-1 w-4/5"
-                />
-
-                <Icon
-                  icon="ph:speaker-high-light"
-                  className="text-xl cursor-pointer"
-                  onClick={() => handleVolumeChange(0.1)}
-                />
-              </label>
-            </div>
+              <Icon
+                icon="ph:speaker-high-light"
+                className="text-base md:text-xl cursor-pointer"
+                onClick={() => handleVolumeChange(0.1)}
+              />
+            </label>
           </div>
 
           {/* Subscribe Prompt */}
           {showNavigateToSpotifyPrompt && (
-            <div className="fixed bottom-10 z-50 backdrop-filter backdrop-blur-lg bg-opacity-80 bg-primary-text p-4 text-xs text-black rounded space-y-1">
-              <p>
-                Want to listen to the full track? Listen on{" "}
-                <span>
-                  <a
-                    href={`spotify://track/${currentlyPlayingTrack?.item.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary font-medium"
-                  >
-                    SPOTIFY APP
-                  </a>{" "}
-                  or{" "}
-                  <a
-                    href={`https://open.spotify.com/track/${currentlyPlayingTrack?.item.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary font-medium"
-                  >
-                    SPOTIFY WEB
-                  </a>
-                </span>
-              </p>
+            <div
+              className="fixed bottom-10 z-50 backdrop-filter backdrop-blur-lg bg-opacity-80 flex flex-col bg-primary-text text-xs text-black rounded space-y-1"
+              ref={promptRef}
+            >
+              <Icon
+                icon="majesticons:close"
+                className="text-base md:text-xl cursor-pointer self-end p-1"
+                onClick={() => setShowNavigateToSpotifyPrompt(false)}
+              />
 
-              <p>
-                Don't have Spotify?{" "}
-                <span>
-                  <a
-                    href="https://www.spotify.com/download/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary font-medium"
-                  >
-                    GET SPOTIFY FREE
-                  </a>
-                </span>
-              </p>
+              <div className="space-y-1 px-4 pb-4">
+                <p>
+                  Want to listen to the full track? Listen on{" "}
+                  <span>
+                    <a
+                      href={`spotify://track/${currentlyPlayingTrack?.item.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary font-medium"
+                    >
+                      SPOTIFY APP
+                    </a>{" "}
+                    or{" "}
+                    <a
+                      href={`https://open.spotify.com/track/${currentlyPlayingTrack?.item.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary font-medium"
+                    >
+                      SPOTIFY WEB
+                    </a>
+                  </span>
+                </p>
+                <p>
+                  Don't have Spotify?{" "}
+                  <span>
+                    <a
+                      href="https://www.spotify.com/download/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary font-medium"
+                    >
+                      GET SPOTIFY FREE
+                    </a>
+                  </span>
+                </p>
+              </div>
             </div>
           )}
         </div>
-      )}
+      ) : null}
     </>
   );
 };

@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { Link, useLocation } from "react-router-dom";
 import { toggleNavbar } from "../features/navbar/navbarSlice";
 import { toggleModal } from "../features/modal/createNewPlaylistModalSlice";
+import { clearAccessToken } from "../features/auth/authSlice";
 
 const Navbar: React.FC = () => {
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
@@ -16,6 +17,10 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     setCurrentPage(location.pathname);
   }, [location]);
+
+  const handleLogOut = () => {
+    dispatch(clearAccessToken());
+  };
 
   const menu = [
     {
@@ -207,7 +212,7 @@ const Navbar: React.FC = () => {
 
         <div className={`group ${openNav ? "px-4" : "px-2"} w-full`}>
           <Link
-            to="/log-out"
+            to="/"
             className={`flex justify-start items-center gap-3 text-base cursor-pointer border-t border-t-zinc-600 pl-2 pt-4 ${
               !openNav && "bg-opacity-0"
             } ${
@@ -215,6 +220,7 @@ const Navbar: React.FC = () => {
                 ? `text-${hoverColor} group-hover:text-opacity-80 font-medium`
                 : `text-primary-text group-hover:text-${hoverColor} group-hover:text-opacity-80`
             } w-full`}
+            onClick={handleLogOut}
           >
             <Icon icon="solar:logout-2-outline" />
             <span className={`${openNav ? "block" : "hidden"} pt-1`}>
