@@ -37,6 +37,7 @@ export interface ShowResponse {
   name: string;
   publisher: string;
   images: { url: string }[];
+  isLoading: boolean;
 }
 
 export interface TrackResponse {
@@ -47,6 +48,7 @@ export interface TrackResponse {
   added_at: string;
   duration_ms: number;
   preview_url: string;
+  isLoading: boolean;
 }
 
 export interface TracksResponse {

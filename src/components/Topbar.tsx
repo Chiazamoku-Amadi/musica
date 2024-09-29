@@ -22,17 +22,14 @@ const Topbar: React.FC = () => {
           className="flex items-center"
           onClick={() => dispatch(toggleTheme())}
         >
-          {isDarkMode ? (
-            <Icon
-              icon="entypo:light-up"
-              className={`text-primary-text hover:text-dark-background text-lg py-1 cursor-pointer`}
-            />
-          ) : (
-            <Icon
-              icon="arcticons:dark-launcher"
-              className={`text-light-navbar-bg hover:text-dark-background text-lg py-1 cursor-pointer`}
-            />
-          )}
+          <Icon
+            icon={`${
+              isDarkMode ? "entypo:light-up" : "arcticons:dark-launcher"
+            }`}
+            className={`${
+              isDarkMode ? "text-primary-text" : "text-light-navbar-bg"
+            } hover:text-dark-background text-lg py-1 cursor-pointer`}
+          />
         </div>
 
         <User />
