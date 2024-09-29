@@ -195,8 +195,6 @@ const Player = () => {
                 icon="ph:repeat-light"
                 className="text-base md:text-xl text-secondary-text"
               />
-              {/* <Icon icon="ph:repeat-fill" className="text-base md:text-xl text-secondary-text" /> */}
-              {/* <Icon icon="ph:repeat-once-fill" className="text-base md:text-xl text-secondary-text" /> */}
             </div>
           </div>
 

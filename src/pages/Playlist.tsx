@@ -6,8 +6,8 @@ import User from "../components/User";
 import { toggleTheme } from "../features/theme/themeSlice";
 import { toggleNavbar } from "../features/navbar/navbarSlice";
 import playlistAvatar from "../assets/playlist-avatar.png";
-import { useParams } from "react-router-dom";
-import { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { fetchPlaylist } from "../spotifyAPI";
 import { toggleModal } from "../features/modal/addTracksToPlaylistModalSlice";
 import AddToPlaylistModal from "../components/modal/AddToPlaylistModal";
@@ -17,10 +17,13 @@ import {
   setCurrentlyPlayingTrack,
 } from "../features/player/playerSlice";
 import { CurrentlyPlayingTrackResponse } from "../types/types";
+import Loader from "../components/Loader";
 
 const Playlist = () => {
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
   const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const [showAnimatedLoader, setShowAnimatedLoader] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const currentPlaylist = useAppSelector(
     (state) => state.currentPlaylist.currentPlaylist
   );
@@ -31,11 +34,20 @@ const Playlist = () => {
 
   const dispatch = useAppDispatch();
 
+  // Simulating data fetching and show loader for 2s
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowAnimatedLoader(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   // Fetching current playlist
   useEffect(() => {
     if (accessToken && currentPlaylistId) {
       fetchPlaylist(accessToken, currentPlaylistId)
-        .then((data) =>
+        .then((data) => {
           dispatch(
             setCurrentPlaylist({
               id: data.id,
@@ -46,8 +58,11 @@ const Playlist = () => {
               public: data.public,
               tracks: data.tracks,
             })
-          )
-        )
+          );
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 3000);
+        })
         .catch(console.error);
     }
   }, [accessToken, currentPlaylistId, dispatch]);
@@ -99,6 +114,7 @@ const Playlist = () => {
             duration_ms: track.track.duration_ms,
             added_at: track.track.added_at,
             preview_url: track.track.preview_url,
+            isLoading: isLoading,
           },
         };
 
@@ -152,155 +168,187 @@ const Playlist = () => {
     });
 
   return (
-    <>
-      {currentPlaylist ? (
-        <div className="flex justify-end overflow-hidden h-screen w-full">
-          <Navbar />
+    <div className="flex justify-end overflow-hidden h-screen w-full">
+      <Navbar />
 
-          <main
-            className={`${
-              isDarkMode ? "bg-dark-background" : "bg-light-background"
-            } overflow-y-auto h-screen w-full`}
-          >
-            <section
-              className={`sticky top-0 z-10 backdrop-filter backdrop-blur-lg bg-opacity-80 ${
-                isDarkMode ? "bg-dark-topbar-bg" : "bg-light-topbar-bg"
-              } p-4 md:p-8 h-2/5 w-full`}
-            >
-              <div className="flex justify-between items-start h-1/5">
-                <Search />
+      <main
+        className={`${
+          isDarkMode ? "bg-dark-background" : "bg-light-background"
+        } overflow-y-auto h-screen w-full`}
+      >
+        {currentPlaylist ? (
+          showAnimatedLoader ? (
+            <Loader />
+          ) : (
+            <>
+              <section
+                className={`sticky top-0 z-10 backdrop-filter backdrop-blur-lg bg-opacity-80 ${
+                  isDarkMode ? "bg-dark-topbar-bg" : "bg-light-topbar-bg"
+                } p-4 md:p-8 h-2/5 w-full`}
+              >
+                <div className="flex justify-between items-start h-1/5">
+                  <Search />
 
-                <div className="flex items-center gap-4 sm:gap-8">
-                  <div
-                    className="flex items-center"
-                    onClick={() => dispatch(toggleTheme())}
-                  >
-                    {isDarkMode ? (
-                      <Icon
-                        icon="entypo:light-up"
-                        className={`text-primary-text hover:text-dark-background text-lg py-1 cursor-pointer`}
-                      />
-                    ) : (
-                      <Icon
-                        icon="arcticons:dark-launcher"
-                        className={`text-light-navbar-bg hover:text-dark-background text-lg py-1 cursor-pointer`}
-                      />
-                    )}
-                  </div>
-
-                  <User />
-
-                  <Icon
-                    icon="pajamas:hamburger"
-                    className="flex md:hidden text-secondary-text cursor-pointer"
-                    onClick={() => dispatch(toggleNavbar())}
-                  />
-                </div>
-              </div>
-
-              <div className="flex justify-between items-end h-4/5">
-                <div className="flex justify-start items-end gap-x-8">
-                  {currentPlaylist.images &&
-                  currentPlaylist.images.length > 0 ? (
-                    <img
-                      src={currentPlaylist.images[0].url}
-                      alt="playlist-image"
-                      className="object-cover rounded-lg w-40 h-40"
-                    />
-                  ) : (
+                  <div className="flex items-center gap-4 sm:gap-8">
                     <div
-                      className={`flex justify-center items-center rounded-lg ${
-                        isDarkMode
-                          ? "bg-dark-navbar-bg"
-                          : "bg-dark-topbar-bg bg-opacity-80"
-                      }`}
+                      className="flex items-center"
+                      onClick={() => dispatch(toggleTheme())}
                     >
-                      <img
-                        src={playlistAvatar}
-                        alt="playlist-avatar"
-                        className="object-cover w-40 h-40 "
+                      <Icon
+                        icon={`${
+                          isDarkMode
+                            ? "entypo:light-up"
+                            : "arcticons:dark-launcher"
+                        }`}
+                        className={`${
+                          isDarkMode
+                            ? "text-primary-text"
+                            : "text-light-navbar-bg"
+                        }  hover:text-dark-background text-lg py-1 cursor-pointer`}
                       />
                     </div>
-                  )}
 
-                  <div className="flex flex-col justify-center items-start gap-y-2">
-                    <p className="text-xs md:text-sm text-secondary-text">
-                      {currentPlaylist.public
-                        ? "Public Playlist"
-                        : "Private Playlist"}
-                    </p>
-                    <h4
-                      className={`text-lg md:text-6xl text-dark-background font-medium ${
-                        isDarkMode ? "text-opacity-100" : "text-opacity-80"
-                      }`}
-                    >
-                      {currentPlaylist.name}
-                    </h4>
-                    <p className="text-xs md:text-sm text-secondary-text font-bold">
-                      {currentPlaylist.owner.display_name}
-                    </p>
+                    <User />
+
+                    <Icon
+                      icon="pajamas:hamburger"
+                      className="flex md:hidden text-secondary-text cursor-pointer"
+                      onClick={() => dispatch(toggleNavbar())}
+                    />
                   </div>
                 </div>
 
-                <button
-                  onClick={() => dispatch(toggleModal())}
-                  className={`${
-                    isDarkMode
-                      ? "bg-dark-navbar-bg hover:bg-opacity-90"
-                      : "bg-dark-topbar-bg bg-opacity-80 hover:bg-opacity-70"
-                  } text-white py-2 px-8 rounded-lg`}
-                >
-                  Add Songs
-                </button>
-              </div>
-            </section>
+                <div className="flex flex-col justify-between h-4/5">
+                  <Link
+                    to={"/playlists"}
+                    className={`flex justify-center items-center gap-1 self-start hover:text-dark-background cursor-pointer ${
+                      isDarkMode
+                        ? "text-secondary-text"
+                        : "text-light-navbar-bg hover:opacity-60"
+                    }`}
+                  >
+                    <Icon
+                      icon={`${
+                        isDarkMode
+                          ? "eva:arrow-back-outline"
+                          : "eva:arrow-back-outline"
+                      }`}
+                      className="text-lg py-1"
+                    />
 
-            <section className="flex flex-col gap-y-4 px-4 md:px-8 pt-2 md:pt-4 pb-4 md:pb-8 w-full">
-              <Icon
-                icon="prime:list"
-                className={`text-3xl self-end ${
-                  isDarkMode ? "text-secondary-text" : "text-dark-topbar-bg"
-                }`}
-              />
+                    <p className="text-sm md:text-base font-medium">Back</p>
+                  </Link>
 
-              <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-                <thead
-                  className={`text-xs text-white uppercase bg-dark-topbar-bg ${
-                    isDarkMode ? "bg-opacity-100" : "bg-opacity-50"
-                  } w-full`}
-                >
-                  <tr>
-                    <th scope="col" className="px-6 py-3 w-[5%]">
-                      #
-                    </th>
-                    <th scope="col" className="px-6 py-3 w-[30%]">
-                      Title
-                    </th>
-                    <th scope="col" className="px-6 py-3 w-[30%]">
-                      Album
-                    </th>
-                    <th scope="col" className="px-6 py-3 w-[25%]">
-                      Date Added
-                    </th>
-                    <th scope="col" className="px-6 py-3 w-[10%]">
-                      <Icon icon="fluent:clock-20-filled" className="text-xl" />
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>{tracks}</tbody>
-              </table>
-            </section>
-          </main>
+                  <div className="flex justify-between items-end">
+                    <div className="flex flex-col md:flex-row justify-start items-start md:items-end gap-y-4 md:gap-x-8">
+                      {currentPlaylist.images &&
+                      currentPlaylist.images.length > 0 ? (
+                        <img
+                          src={currentPlaylist.images[0].url}
+                          alt="playlist-image"
+                          className="object-cover rounded-lg w-32 md:w-40 h-32 md:h-40"
+                        />
+                      ) : (
+                        <div
+                          className={`flex justify-center items-center rounded-lg ${
+                            isDarkMode
+                              ? "bg-dark-navbar-bg"
+                              : "bg-dark-topbar-bg bg-opacity-80"
+                          }`}
+                        >
+                          <img
+                            src={playlistAvatar}
+                            alt="playlist-avatar"
+                            className="object-cover w-32 md:w-40 h-32 md:h-40"
+                          />
+                        </div>
+                      )}
 
-          <AddToPlaylistModal
-            currentPlaylist={currentPlaylist}
-            playlistId={currentPlaylistId || ""}
-          />
-        </div>
-      ) : (
-        <p>Loading...</p>
-      )}
-    </>
+                      <div className="flex flex-col justify-center items-start gap-y-0 md:gap-y-2">
+                        <p className="text-xs md:text-sm text-secondary-text">
+                          {currentPlaylist.public
+                            ? "Public Playlist"
+                            : "Private Playlist"}
+                        </p>
+                        <h4
+                          className={`text-lg md:text-6xl text-dark-background font-medium ${
+                            isDarkMode ? "text-opacity-100" : "text-opacity-80"
+                          }`}
+                        >
+                          {currentPlaylist.name}
+                        </h4>
+                        <p className="text-xs md:text-sm text-secondary-text font-bold">
+                          {currentPlaylist.owner.display_name}
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => dispatch(toggleModal())}
+                      className={`${
+                        isDarkMode
+                          ? "bg-dark-navbar-bg hover:bg-opacity-90"
+                          : "bg-dark-topbar-bg bg-opacity-80 hover:bg-opacity-70"
+                      } text-xs md:text-base text-white py-2 px-4 md:px-8 rounded-lg`}
+                    >
+                      Add Songs
+                    </button>
+                  </div>
+                </div>
+              </section>
+
+              <section className="flex flex-col gap-y-4 px-4 md:px-8 pt-2 md:pt-4 pb-4 md:pb-8 w-full">
+                <Icon
+                  icon="prime:list"
+                  className={`text-3xl self-end ${
+                    isDarkMode ? "text-secondary-text" : "text-dark-topbar-bg"
+                  }`}
+                />
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+                    <thead
+                      className={`text-xs text-white uppercase bg-dark-topbar-bg ${
+                        isDarkMode ? "bg-opacity-100" : "bg-opacity-50"
+                      } w-full`}
+                    >
+                      <tr>
+                        <th scope="col" className="px-6 py-3 w-[5%]">
+                          #
+                        </th>
+                        <th scope="col" className="px-6 py-3 w-[30%]">
+                          Title
+                        </th>
+                        <th scope="col" className="px-6 py-3 w-[30%]">
+                          Album
+                        </th>
+                        <th scope="col" className="px-6 py-3 w-[25%]">
+                          Date Added
+                        </th>
+                        <th scope="col" className="px-6 py-3 w-[10%]">
+                          <Icon
+                            icon="fluent:clock-20-filled"
+                            className="text-xl"
+                          />
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>{tracks}</tbody>
+                  </table>
+                </div>
+              </section>
+            </>
+          )
+        ) : (
+          <Loader />
+        )}
+      </main>
+
+      <AddToPlaylistModal
+        currentPlaylist={currentPlaylist}
+        playlistId={currentPlaylistId || ""}
+      />
+    </div>
   );
 };
 

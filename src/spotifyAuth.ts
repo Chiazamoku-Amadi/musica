@@ -1,5 +1,7 @@
 // Creating Utility Functions for Authentication
 import api from "./api";
+import store from "./app/store";
+import { setAccessToken } from "./features/auth/authSlice";
 import { TokenResponse } from "./types/types";
 
 const clientId = import.meta.env.VITE_SPOTIFY_CLIENT_ID;
@@ -69,7 +71,7 @@ export const getAccessToken = async (code: string): Promise<TokenResponse> => {
   const codeVerifier = localStorage.getItem("code_verifier");
 
   if (!codeVerifier) {
-    throw new Error("Code verifier not found in local storage");
+    throw new Error("No code verifier found in local storage");
   }
 
   const params = new URLSearchParams({
@@ -96,7 +98,42 @@ export const getAccessToken = async (code: string): Promise<TokenResponse> => {
   );
 
   localStorage.setItem("access_token", response.data.access_token);
+  localStorage.setItem("refresh_token", response.data.refresh_token);
   localStorage.removeItem("code_verifier");
 
   return response.data;
+};
+
+// Refresh Token Request: Getting the refresh token
+export const getRefreshToken = async () => {
+  // Refresh token that has been previously stored
+  const refreshToken = localStorage.getItem("refresh_token");
+
+  if (!refreshToken) {
+    throw new Error("No refresh token found in local storage");
+  }
+
+  const params = new URLSearchParams({
+    grant_type: "refresh_token",
+    refresh_token: refreshToken,
+    client_id: clientId,
+  });
+
+  const response = await api.post(
+    "https://accounts.spotify.com/api/token",
+    params,
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+      },
+    }
+  );
+
+  localStorage.setItem("access_token", response.data.access_token);
+  store.dispatch(setAccessToken(response.data.access_token));
+
+  localStorage.setItem("refresh_token", response.data.refresh_token);
+
+  return response.data.access_token;
 };

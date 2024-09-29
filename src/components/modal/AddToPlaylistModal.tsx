@@ -11,7 +11,7 @@ import { Icon } from "@iconify-icon/react/dist/iconify.mjs";
 import { setCurrentPlaylist } from "../../features/playlist/currentPlaylistSlice";
 
 interface AddToPlaylistModalProps {
-  currentPlaylist: PlaylistResponse;
+  currentPlaylist: PlaylistResponse | null;
   playlistId: string;
 }
 
@@ -60,10 +60,10 @@ const AddToPlaylistModal: React.FC<AddToPlaylistModalProps> = ({
   }, [dispatch]);
 
   const filteredTracks = recommendedTracks.filter((recommendedTrack) => {
-    const currentPlaylistTracks = currentPlaylist.tracks.items; // Tracks in the current playlist
+    const currentPlaylistTracks = currentPlaylist?.tracks.items; // Tracks in the current playlist
 
     // Returns all recommended tracks that are in the current playlist
-    const isAlreadyInPlaylist = currentPlaylistTracks.some(
+    const isAlreadyInPlaylist = currentPlaylistTracks?.some(
       (currentPlaylistTrack) =>
         currentPlaylistTrack.track.id === recommendedTrack.id
     );
