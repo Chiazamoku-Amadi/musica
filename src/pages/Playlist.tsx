@@ -133,7 +133,7 @@ const Playlist = () => {
       return (
         <tr
           key={track.track.id}
-          className={`border-b cursor-pointer hover:text-primary-text ${
+          className={`text-xs border-b cursor-pointer hover:text-primary-text ${
             isDarkMode ? "hover:bg-[#a1a1a1]" : "hover:bg-[#b8b8b8]"
           }
             ${
@@ -221,7 +221,7 @@ const Playlist = () => {
                 <div className="flex flex-col justify-between h-4/5">
                   <Link
                     to={"/playlists"}
-                    className={`flex justify-center items-center gap-1 self-start hover:text-dark-background cursor-pointer ${
+                    className={`flex justify-center items-center gap-2 self-start hover:text-dark-background cursor-pointer ${
                       isDarkMode
                         ? "text-secondary-text"
                         : "text-light-navbar-bg hover:opacity-60"
@@ -246,7 +246,7 @@ const Playlist = () => {
                         <img
                           src={currentPlaylist.images[0].url}
                           alt="playlist-image"
-                          className="object-cover rounded-lg w-32 md:w-40 h-32 md:h-40"
+                          className="object-cover rounded-lg w-24 md:w-40 h-24 md:h-40"
                         />
                       ) : (
                         <div
@@ -259,7 +259,7 @@ const Playlist = () => {
                           <img
                             src={playlistAvatar}
                             alt="playlist-avatar"
-                            className="object-cover w-32 md:w-40 h-32 md:h-40"
+                            className="object-cover w-24 md:w-40 h-24 md:h-40"
                           />
                         </div>
                       )}
@@ -297,7 +297,13 @@ const Playlist = () => {
                 </div>
               </section>
 
-              <section className="flex flex-col gap-y-4 px-4 md:px-8 pt-2 md:pt-4 pb-4 md:pb-8 w-full">
+              <section
+                className={`flex flex-col gap-y-4 ${
+                  currentlyPlayingTrack
+                    ? "pb-52 md:pb-32"
+                    : "px-4 md:px-8 pt-2 md:pt-4 pb-4 md:pb-8"
+                } px-4 md:px-8 pt-2 md:pt-4 pb-4 md:pb-8 w-full`}
+              >
                 <Icon
                   icon="prime:list"
                   className={`text-3xl self-end ${

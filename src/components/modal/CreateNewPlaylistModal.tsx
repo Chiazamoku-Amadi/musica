@@ -112,7 +112,7 @@ const CreateNewPlaylistModal = () => {
           <form
             ref={modalRef}
             onSubmit={handleCreatePlaylist}
-            className="bg-light-topbar-bg flex flex-col justify-start items-start gap-6 p-6 md:p-8 rounded-2xl w-1/2 h-auto fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
+            className="bg-light-topbar-bg flex flex-col justify-start items-start gap-6 p-6 md:p-8 rounded-2xl w-[90%] md:w-1/2 h-auto fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
           >
             <header className="flex flex-col justify-between items-center gap-2 w-full">
               <Icon
@@ -180,7 +180,7 @@ const CreateNewPlaylistModal = () => {
                 className="relative peer appearance-none w-4 h-4 bg-transparent checked:bg-black rounded border border-black"
               />
               <svg
-                className="absolute left-[86px] w-4 h-4 hidden peer-checked:block pointer-events-none"
+                className="absolute left-[72px] md:left-[86px] w-4 h-4 hidden peer-checked:block pointer-events-none"
                 xmlns="http://www.w3.org/2000/svg"
                 width="1em"
                 height="1em"

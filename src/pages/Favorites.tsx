@@ -22,6 +22,9 @@ const Favorites: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const isDarkMode = useAppSelector((state) => state.theme.isDarkMode);
   const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const currentlyPlayingTrack = useAppSelector(
+    (state) => state.player.currentlyPlayingTrack
+  );
 
   // Simulating data fetching and show loader for 2s
   useEffect(() => {
@@ -152,7 +155,13 @@ const Favorites: React.FC = () => {
         {showAnimatedLoader ? (
           <Loader />
         ) : (
-          <div className="space-y-6 md:space-y-10 p-4 md:p-8 w-full">
+          <div
+            className={`${
+              currentlyPlayingTrack
+                ? "px-4 md:px-8 pt-4 md:pt-8 pb-52 md:pb-32"
+                : "p-4 md:p-8"
+            } space-y-6 md:space-y-10 w-full`}
+          >
             <section
               className={`${
                 isDarkMode ? "text-primary-text" : "text-dark-background"

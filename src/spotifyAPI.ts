@@ -44,6 +44,39 @@ export const fetchPopularArtists = async (accessToken: string) => {
   return response.data.artists.items;
 };
 
+// To get an artist's albums
+export const fetchArtistAlbums = async (
+  accessToken: string,
+  artistId: string
+) => {
+  const response = await api.get(`/artists/${artistId}/albums`, {
+    params: {
+      id: { artistId },
+      limit: 24,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data.items;
+};
+
+// To get an album
+export const fetchAlbum = async (accessToken: string, albumId: string) => {
+  const response = await api.get(`albums/${albumId}`, {
+    params: {
+      id: { albumId },
+      limit: 24,
+    },
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  return response.data;
+};
+
 // To get recommended genres
 export const fetchRecommendedGenres = async (accessToken: string) => {
   const response = await api.get("/recommendations/available-genre-seeds", {

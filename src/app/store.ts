@@ -8,6 +8,7 @@ import currentUserPlaylistsReducer from "../features/playlist/currentUserPlaylis
 import addTracksToPlaylistModalReducer from "../features/modal/addTracksToPlaylistModalSlice";
 import currentPlaylistReducer from "../features/playlist/currentPlaylistSlice";
 import playerReducer from "../features/player/playerSlice";
+import selectedArtistReducer from "../features/selectedArtistSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     addTracksToPlaylistModal: addTracksToPlaylistModalReducer,
     currentPlaylist: currentPlaylistReducer,
     player: playerReducer,
+    selectedArtist: selectedArtistReducer,
   },
 });
 

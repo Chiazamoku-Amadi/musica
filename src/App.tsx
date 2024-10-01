@@ -41,7 +41,7 @@ const App: React.FC = () => {
         <Route path="/" element={<Navigate replace to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/callback" element={<Callback />} />
-        <Route path="/home" element={isLoading ? <Loader /> : <Home />} />
+        <Route path="/home/*" element={isLoading ? <Loader /> : <Home />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/playlists/*" element={<Playlists />} />

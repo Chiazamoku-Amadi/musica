@@ -77,7 +77,10 @@ const AddToPlaylistModal: React.FC<AddToPlaylistModalProps> = ({
     const seconds = track.duration_ms % 60;
 
     return (
-      <tr key={track.id} className="border-b border-dark-topbar-bg w-full">
+      <tr
+        key={track.id}
+        className="text-xs border-b border-dark-topbar-bg w-full"
+      >
         <td scope="row" className="px-6 py-3 w-[5%] font-medium">
           {index + 1}
         </td>
@@ -171,7 +174,7 @@ const AddToPlaylistModal: React.FC<AddToPlaylistModalProps> = ({
           <form
             ref={modalRef}
             onSubmit={handleAddTracks}
-            className="bg-light-topbar-bg flex flex-col justify-start items-start gap-6 p-6 md:p-8 rounded-2xl w-4/5 h-auto fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50"
+            className="bg-light-topbar-bg flex flex-col justify-start items-start gap-6 p-6 md:p-8 rounded-2xl w-[90%] md:w-4/5 h-[90%] lg:h-auto fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 overflow-auto"
           >
             <div className="flex flex-col justify-between items-start gap-4 w-full">
               <Icon
@@ -180,33 +183,39 @@ const AddToPlaylistModal: React.FC<AddToPlaylistModalProps> = ({
                 onClick={handleCloseModal}
               />
 
-              <table className="text-sm text-left rtl:text-right text-gray-500 w-full">
-                <thead
-                  className={`text-xs text-white bg-dark-topbar-bg uppercase ${
-                    isDarkMode ? "bg-opacity-100" : "bg-opacity-50"
-                  } w-full`}
-                >
-                  <tr>
-                    <th scope="col" className="px-6 py-3 w-[5%]">
-                      #
-                    </th>
-                    <th scope="col" className="px-6 py-3 w-[30%]">
-                      Title
-                    </th>
-                    <th scope="col" className="px-6 py-3 w-[30%]">
-                      Album
-                    </th>
-                    <th scope="col" className="px-6 py-3 w-[20%]">
-                      Artist
-                    </th>
-                    <th scope="col" className="px-6 py-3 w-[10%]">
-                      <Icon icon="fluent:clock-20-filled" className="text-xl" />
-                    </th>
-                    <th scope="col" className="px-6 py-3 w-[5%]"></th>
-                  </tr>
-                </thead>
-                <tbody>{suggestedTracks}</tbody>
-              </table>
+              <div className="overflow-auto w-full">
+                <table className="text-left rtl:text-right text-gray-500 w-full">
+                  <thead
+                    className={`text-xs text-white bg-dark-topbar-bg uppercase ${
+                      isDarkMode ? "bg-opacity-100" : "bg-opacity-50"
+                    } w-full`}
+                  >
+                    <tr>
+                      <th scope="col" className="px-6 py-3 w-[5%]">
+                        #
+                      </th>
+                      <th scope="col" className="px-6 py-3 w-[30%]">
+                        Title
+                      </th>
+                      <th scope="col" className="px-6 py-3 w-[30%]">
+                        Album
+                      </th>
+                      <th scope="col" className="px-6 py-3 w-[20%]">
+                        Artist
+                      </th>
+                      <th scope="col" className="px-6 py-3 w-[10%]">
+                        <Icon
+                          icon="fluent:clock-20-filled"
+                          className="text-xl"
+                        />
+                      </th>
+                      <th scope="col" className="px-6 py-3 w-[5%]"></th>
+                    </tr>
+                  </thead>
+                  <tbody>{suggestedTracks}</tbody>
+                </table>
+              </div>
+
               <button
                 className={`bg-dark-topbar-bg self-end ${
                   isDarkMode
