@@ -82,10 +82,6 @@ export const getAccessToken = async (code: string): Promise<TokenResponse> => {
     code_verifier: codeVerifier,
   });
 
-  console.log("Authorization Code:", code);
-  console.log("Code Verifier:", codeVerifier);
-  console.log("Params:", params.toString());
-
   const response = await api.post<TokenResponse>(
     "https://accounts.spotify.com/api/token",
     params,

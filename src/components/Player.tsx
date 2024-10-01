@@ -133,7 +133,7 @@ const Player = () => {
           {/* Track Information Section */}
           <div className="flex justify-start items-end gap-4 md:w-1/4 w-full">
             <img
-              src={currentlyPlayingTrack.item.album.images[0].url}
+              src={currentlyPlayingTrack.item.album?.images[0].url}
               alt="track-image"
               className="rounded shadow-2xl h-12"
             />
