@@ -15,7 +15,7 @@ const pathVariant = {
       ease: easeInOut,
       fill: { delay: 1, duration: 1 },
       repeat: Infinity,
-      repeatType: "Loop",
+      repeatType: "loop" as const,
     },
   },
 };

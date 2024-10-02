@@ -11,7 +11,7 @@ const currentUserPlaylistsSlice = createSlice({
       state,
       action: PayloadAction<PlaylistResponse[]>
     ) => {
-      return action.payload;
+      state.splice(0, state.length, ...action.payload);
     },
   },
 });
