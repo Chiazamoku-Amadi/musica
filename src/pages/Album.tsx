@@ -41,7 +41,7 @@ const Album = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Fetching an album
+  // Fetching one album
   useEffect(() => {
     if (accessToken && selectedAlbumId) {
       setIsLoading(true);
