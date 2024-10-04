@@ -133,15 +133,16 @@ const Playlist = () => {
       return (
         <tr
           key={track.track.id}
-          className={`text-xs border-b cursor-pointer hover:text-primary-text ${
-            isDarkMode ? "hover:bg-[#a1a1a1]" : "hover:bg-[#b8b8b8]"
+          className={`text-xs border-b cursor-pointer ${
+            isDarkMode
+              ? "bg-dark-topbar-bg hover:bg-dark-navbar-bg text-primary-text border-b-dark-navbar-bg"
+              : "bg-light-topbar-bg hover:bg-light-navbar-bg hover:bg-opacity-20 text-dark-background border-b-light-navbar-bg border-opacity-10"
           }
             ${
-              currentTrack
-                ? `${
-                    isDarkMode ? "bg-[#a1a1a1]" : "bg-[#b8b8b8]"
-                  } text-primary-text`
-                : "odd:bg-white even:bg-light-topbar-bg"
+              currentTrack &&
+              `${
+                isDarkMode ? "bg-[#a1a1a1]" : "bg-[#b8b8b8]"
+              } text-primary-text`
             }
           `}
           onClick={handleTrackClick}
@@ -271,8 +272,10 @@ const Playlist = () => {
                             : "Private Playlist"}
                         </p>
                         <h4
-                          className={`text-lg md:text-6xl text-dark-background font-medium ${
-                            isDarkMode ? "text-opacity-100" : "text-opacity-80"
+                          className={`text-lg md:text-6xl font-medium ${
+                            isDarkMode
+                              ? "text-primary-text text-opacity-100"
+                              : "text-dark-background text-opacity-80"
                           }`}
                         >
                           {currentPlaylist.name}
@@ -314,9 +317,13 @@ const Playlist = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm text-left rtl:text-right text-gray-500">
                     <thead
-                      className={`text-xs text-white uppercase bg-dark-topbar-bg ${
-                        isDarkMode ? "bg-opacity-100" : "bg-opacity-50"
-                      } w-full`}
+                      className={`text-xs uppercase bg-opacity-30
+                        ${
+                          isDarkMode
+                            ? "bg-dark-navbar-bg text-primary-text"
+                            : "bg-light-navbar-bg text-dark-background"
+                        } 
+                      w-full`}
                     >
                       <tr>
                         <th scope="col" className="px-6 py-3 w-[5%]">
