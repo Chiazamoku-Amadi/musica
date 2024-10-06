@@ -11,6 +11,7 @@ import Player from "./components/Player";
 import { useDispatch } from "react-redux";
 import { setAccessToken } from "./features/auth/authSlice";
 import Loader from "./components/Loader";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App: React.FC = () => {
   const dispatch = useDispatch();
@@ -38,13 +39,53 @@ const App: React.FC = () => {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Navigate replace to="/login" />} />
+        {/* Route for login */}
         <Route path="/login" element={<Login />} />
         <Route path="/callback" element={<Callback />} />
-        <Route path="/home/*" element={isLoading ? <Loader /> : <Home />} />
-        <Route path="/discover" element={<Discover />} />
-        <Route path="/favorites" element={<Favorites />} />
-        <Route path="/playlists/*" element={<Playlists />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/home/*"
+          element={
+            <ProtectedRoute>{isLoading ? <Loader /> : <Home />}</ProtectedRoute>
+          }
+        />
+        <Route
+          path="/discover"
+          element={
+            <ProtectedRoute>
+              <Discover />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/favorites"
+          element={
+            <ProtectedRoute>
+              <Favorites />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/playlists/*"
+          element={
+            <ProtectedRoute>
+              <Playlists />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Default route redirects to login or home based on authentication */}
+        <Route
+          path="/"
+          element={
+            localStorage.getItem("access_token") ? (
+              <Navigate replace to="/home" />
+            ) : (
+              <Navigate replace to="/login" />
+            )
+          }
+        />
       </Routes>
 
       <CreateNewPlaylistModal />
