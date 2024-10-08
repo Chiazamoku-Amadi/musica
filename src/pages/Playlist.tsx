@@ -305,7 +305,7 @@ const Playlist = () => {
               <section
                 className={`flex flex-col gap-y-4 ${
                   currentlyPlayingTrack
-                    ? "pb-52 md:pb-36"
+                    ? "pb-52 md:pb-32"
                     : "px-4 md:px-8 pt-2 md:pt-4 pb-4 md:pb-8"
                 } px-4 md:px-8 pt-2 md:pt-4 pb-4 md:pb-8 w-full`}
               >
