@@ -98,13 +98,15 @@ const Album = () => {
           className={`text-xs border-b cursor-pointer ${
             isDarkMode
               ? "bg-dark-topbar-bg hover:bg-dark-navbar-bg text-primary-text border-b-dark-navbar-bg"
-              : "bg-light-topbar-bg hover:bg-light-navbar-bg hover:bg-opacity-20 text-dark-background border-b-light-navbar-bg border-opacity-10"
+              : "bg-light-topbar-bg hover:bg-zinc-400 hover:bg-opacity-40 text-dark-background border-b-light-navbar-bg border-opacity-10"
           }
             ${
               currentTrack &&
               `${
-                isDarkMode ? "bg-[#a1a1a1]" : "bg-[#b8b8b8]"
-              } text-primary-text`
+                isDarkMode
+                  ? "bg-dark-navbar-bg bg-opacity-50"
+                  : "bg-zinc-400 bg-opacity-40"
+              }`
             }
           `}
           onClick={handleTrackClick}
@@ -227,7 +229,7 @@ const Album = () => {
               <section
                 className={`flex flex-col gap-y-4 px-4 md:px-8 pt-2 md:pt-4 pb-4 md:pb-8 ${
                   currentlyPlayingTrack
-                    ? "pb-52 md:pb-32"
+                    ? "pb-52 md:pb-36"
                     : "px-4 md:px-8 pt-2 md:pt-4 pb-4 md:pb-8"
                 } w-full`}
               >
