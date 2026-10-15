@@ -1,22 +1,37 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getSpotifyAuthURL } from "../spotifyAuth";
 import { Icon } from "@iconify-icon/react";
 
 const Login = () => {
-  const [authUrl, setAuthUrl] = useState<string | null>(null);
+  // const [authUrl, setAuthUrl] = useState<string | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchUrl = async () => {
-      try {
-        const url = await getSpotifyAuthURL();
-        setAuthUrl(url);
-      } catch (error) {
-        console.error("Failed to get Spotify auth URL", error);
-      }
-    };
+  const handleLogin = async () => {
+    setError(null);
+    setIsRedirecting(true);
+    try {
+      const url = await getSpotifyAuthURL();
+      window.location.assign(url);
+    } catch (err) {
+      console.error("Failed to start Spotify login", err);
+      setError("Couldn't start login. Please try again.");
+      setIsRedirecting(false);
+    }
+  };
 
-    fetchUrl();
-  }, []);
+  // useEffect(() => {
+  //   const fetchUrl = async () => {
+  //     try {
+  //       const url = await getSpotifyAuthURL();
+  //       setAuthUrl(url);
+  //     } catch (error) {
+  //       console.error("Failed to get Spotify auth URL", error);
+  //     }
+  //   };
+
+  //   fetchUrl();
+  // }, []);
 
   return (
     <div className="p-8 overflow-hidden h-screen w-full">
@@ -30,7 +45,7 @@ const Login = () => {
         <h1 className="text-dark-background text-2xl">Musica</h1>
       </div>
 
-      <div className="flex justify-center items-center h-full w-full">
+      {/* <div className="flex justify-center items-center h-full w-full">
         {authUrl ? (
           <a
             href={authUrl}
@@ -40,6 +55,24 @@ const Login = () => {
           </a>
         ) : (
           <div>Loading...</div>
+        )}
+      </div> */}
+
+      <div className="flex flex-col justify-center items-center gap-4 h-full w-full">
+        <button
+          type="button"
+          onClick={handleLogin}
+          disabled={isRedirecting}
+          aria-busy={isRedirecting}
+          className="bg-dark-background text-primary-text rounded-full py-4 px-10 hover:opacity-90 disabled:opacity-60"
+        >
+          {isRedirecting ? "Redirecting to Spotify..." : "Login with Spotify"}
+        </button>
+
+        {error && (
+          <p role="alert" className="text-sm">
+            {error}
+          </p>
         )}
       </div>
     </div>
