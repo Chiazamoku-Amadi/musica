@@ -3,7 +3,6 @@ import { getSpotifyAuthURL } from "../spotifyAuth";
 import { Icon } from "@iconify-icon/react";
 
 const Login = () => {
-  // const [authUrl, setAuthUrl] = useState<string | null>(null);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -20,19 +19,6 @@ const Login = () => {
     }
   };
 
-  // useEffect(() => {
-  //   const fetchUrl = async () => {
-  //     try {
-  //       const url = await getSpotifyAuthURL();
-  //       setAuthUrl(url);
-  //     } catch (error) {
-  //       console.error("Failed to get Spotify auth URL", error);
-  //     }
-  //   };
-
-  //   fetchUrl();
-  // }, []);
-
   return (
     <div className="p-8 overflow-hidden h-screen w-full">
       <div className="flex justify-start items-start gap-2">
@@ -44,19 +30,6 @@ const Login = () => {
         />
         <h1 className="text-dark-background text-2xl">Musica</h1>
       </div>
-
-      {/* <div className="flex justify-center items-center h-full w-full">
-        {authUrl ? (
-          <a
-            href={authUrl}
-            className="bg-dark-background text-primary-text rounded-full py-4 px-10 hover:opacity-90"
-          >
-            Login with Spotify
-          </a>
-        ) : (
-          <div>Loading...</div>
-        )}
-      </div> */}
 
       <div className="flex flex-col justify-center items-center gap-4 h-full w-full">
         <button
